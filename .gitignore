@@ -1,0 +1,5 @@
+.vscode
+.qmake.stash
+Makefile
+Simulations
+*.o
