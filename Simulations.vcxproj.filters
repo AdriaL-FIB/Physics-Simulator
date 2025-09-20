@@ -1,0 +1,257 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;moc;h;def;odl;idl;res;</Extensions>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;moc;h;def;odl;idl;res;</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="code\camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\colliders.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\forces.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\glutils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\glwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\integrators.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\mainwindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\particlesystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\scenes\scenecloth.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\scenes\scenefountain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\scenes\sceneprojectiles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\scenes\scenerope.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\scenes\scenetestcolliders.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\scenes\scenetestintegrators.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\widgets\widgetcloth.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\widgets\widgetfountain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\widgets\widgetprojectiles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\widgets\widgetrope.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\widgets\widgettestcolliders.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\widgets\widgettestintegrators.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="code\camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\colliders.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\defines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\forces.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\glutils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="code\glwidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="code\integrators.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="code\mainwindow.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <ClInclude Include="code\model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\particle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="code\particlesystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <QtMoc Include="code\scene.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="code\scenes\scenecloth.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="code\scenes\scenefountain.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="code\scenes\sceneprojectiles.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="code\scenes\scenerope.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="code\scenes\scenetestcolliders.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="code\scenes\scenetestintegrators.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="code\widgets\widgetcloth.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="code\widgets\widgetfountain.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="code\widgets\widgetprojectiles.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="code\widgets\widgetrope.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="code\widgets\widgettestcolliders.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="code\widgets\widgettestintegrators.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="debug\moc_predefs.h.cbt">
+      <Filter>Generated Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="release\moc_predefs.h.cbt">
+      <Filter>Generated Files</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <QtUic Include="forms\mainwindow.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="forms\widgetcloth.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="forms\widgetfountain.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="forms\widgetprojectiles.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="forms\widgetrope.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="forms\widgettestcolliders.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="forms\widgettestintegrators.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\basic.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\basic.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\cloth.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\cloth.geom">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\cloth.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\lines.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\lines.geom">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\lines.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\phong.frag">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="shaders\phong.vert">
+      <Filter>Resource Files</Filter>
+    </None>
+    <QtRcc Include="shaders.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+  </ItemGroup>
+</Project>

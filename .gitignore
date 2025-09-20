@@ -1,5 +1,14 @@
 .vscode
+.vs
 .qmake.stash
 Makefile
 Simulations
 *.o
+
+Simulations.vcxproj.user
+ui_*.h
+Simulation.qtvscr
+
+debug/*
+release/*
+Simulations.qtvscr
