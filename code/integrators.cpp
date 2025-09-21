@@ -105,5 +105,24 @@ void IntegratorRK4::step(ParticleSystem &system, double dt) {
 
 
 void IntegratorVerlet::step(ParticleSystem &system, double dt) {
-    // TODO
+    double t0 = system.getTime();
+	Vecd p0 = system.getPositions();
+    Vecd prev = system.getPreviousPositions();
+	Vecd a0 = system.getAccelerations();
+    Vecd v0 = system.getVelocities();
+
+    if (t0 < dt) {
+        prev = p0 - v0 * dt;
+    }
+
+
+	Vecd p1 = p0 + this->kd * (p0 - prev) + a0 * dt * dt; // updates positions
+
+	Vecd v1 = (p1 - p0) / (dt); // updates velocities
+
+	system.setPositions(p1);
+	system.setVelocities(v1);
+    system.setPreviousPositions(p0);
+	system.setTime(t0 + dt);
+	system.updateForces();
 }
