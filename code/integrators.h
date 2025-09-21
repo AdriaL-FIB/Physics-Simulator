@@ -22,6 +22,16 @@ public:
     virtual void step(ParticleSystem& system, double dt);
 };
 
+class IntegratorImplicitEuler : public Integrator {
+public:
+    virtual void step(ParticleSystem& system, double dt);
+    const int MAX_NEWTON_ITERATIONS = 100;
+    const double CONVERGENCE_THRESHOLD = 1e-3;
+
+    Vecd evaluateResiudal(ParticleSystem& system, const Vecd& XGuess, double dt);
+    Matd computeJacobi(ParticleSystem& system, const Vecd& XGuess, double dt);
+};
+
 
 class IntegratorMidpoint : public Integrator {
 public:

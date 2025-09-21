@@ -34,6 +34,11 @@
      </item>
      <item>
       <property name="text">
+       <string>Implicit Euler</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
        <string>Midpoint</string>
       </property>
      </item>

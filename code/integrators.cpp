@@ -27,6 +27,92 @@ void IntegratorSymplecticEuler::step(ParticleSystem &system, double dt) {
 }
 
 
+void IntegratorImplicitEuler::step(ParticleSystem& system, double dt) {
+    double t0 = system.getTime();
+    Vecd X0 = system.getState();
+
+    // Newton-Raphson method
+
+    Vecd dx = system.getDerivative();
+    Vecd X_guess = X0 + dt * dx;
+
+    for (int i = 0; i < this->MAX_NEWTON_ITERATIONS; ++i) {
+        Vecd b = -evaluateResiudal(system, X_guess, dt);
+        
+        Matd A = computeJacobi(system, X_guess, dt);
+
+        Vecd deltaX = A.colPivHouseholderQr().solve(b);
+
+        X_guess += deltaX;
+
+        if (deltaX.norm() < this->CONVERGENCE_THRESHOLD) {
+            break;
+        }
+    }
+
+    system.setState(X_guess);
+    system.setTime(t0 + dt);
+    system.updateForces();
+
+}
+
+Vecd IntegratorImplicitEuler::evaluateResiudal(ParticleSystem& system, const Vecd& XGuess, double dt) {
+    double t0 = system.getTime();
+    Vecd X0 = system.getState();
+
+    system.setState(XGuess);
+    system.setTime(t0 + dt);
+    system.updateForces();
+
+    Vecd dXGuess = system.getDerivative(); // (V_guess, F_guess/m)
+
+    Vecd G = XGuess - X0 - dt * dXGuess;
+
+    system.setState(X0);
+    system.setTime(t0);
+    system.updateForces();
+
+    return G;
+}
+
+Matd IntegratorImplicitEuler::computeJacobi(ParticleSystem& system, const Vecd& XGuess, double dt) {
+    double t0 = system.getTime();
+    Vecd X0 = system.getState();
+
+    int N = system.getStateSize();
+    const double epsilon = 1e-6;
+
+    system.setState(XGuess);
+    system.setTime(t0 + dt);
+    system.updateForces();
+
+    Vecd dX_base = system.getDerivative();
+
+    Matd J_f(N, N);
+
+    // Change 1 component at a time
+    for (int j = 0; j < N; ++j) {
+        Vecd epsilonState = XGuess;
+        epsilonState[j] += epsilon;
+        
+        system.setState(epsilonState);
+        system.updateForces();
+
+        Vecd dX_epsilon = system.getDerivative();
+
+        J_f.col(j) = (dX_epsilon - dX_base) / epsilon;
+    }
+
+    Matd A = Matd::Identity(N, N) - dt * J_f;
+
+    // Restore state
+    system.setState(X0);
+    system.setTime(t0);
+    system.updateForces();
+
+    return A;
+}
+
 void IntegratorMidpoint::step(ParticleSystem &system, double dt) {
     double t0 = system.getTime();
     Vecd x0 = system.getState();
