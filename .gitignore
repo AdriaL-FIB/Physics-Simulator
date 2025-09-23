@@ -12,3 +12,7 @@ Simulation.qtvscr
 debug/*
 release/*
 Simulations.qtvscr
+
+moc_*.cpp
+moc_*.h
+qrc_shaders.cpp
