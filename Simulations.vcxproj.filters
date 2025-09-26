@@ -113,6 +113,15 @@
     <ClCompile Include="code\widgets\widgettestintegrators.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\scenes\scenenbody.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="code\widgets\widgetnbody.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\camera.h">
@@ -253,5 +262,13 @@
     <QtRcc Include="shaders.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="code\scenes\scenenbody.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="code\widgets\widgetnbody.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
 </Project>

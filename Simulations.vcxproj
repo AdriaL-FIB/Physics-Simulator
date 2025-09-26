@@ -85,7 +85,8 @@
       <Optimization>MaxSpeed</Optimization>
       <PreprocessorDefinitions>_WINDOWS;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;NDEBUG;QT_NO_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
-      <ProgramDataBaseFileName></ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>
+      </ProgramDataBaseFileName>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
@@ -212,14 +213,17 @@
     <ClCompile Include="code\mainwindow.cpp" />
     <ClCompile Include="code\model.cpp" />
     <ClCompile Include="code\particlesystem.cpp" />
+    <ClCompile Include="code\scene.cpp" />
     <ClCompile Include="code\scenes\scenecloth.cpp" />
     <ClCompile Include="code\scenes\scenefountain.cpp" />
+    <ClCompile Include="code\scenes\scenenbody.cpp" />
     <ClCompile Include="code\scenes\sceneprojectiles.cpp" />
     <ClCompile Include="code\scenes\scenerope.cpp" />
     <ClCompile Include="code\scenes\scenetestcolliders.cpp" />
     <ClCompile Include="code\scenes\scenetestintegrators.cpp" />
     <ClCompile Include="code\widgets\widgetcloth.cpp" />
     <ClCompile Include="code\widgets\widgetfountain.cpp" />
+    <ClCompile Include="code\widgets\widgetnbody.cpp" />
     <ClCompile Include="code\widgets\widgetprojectiles.cpp" />
     <ClCompile Include="code\widgets\widgetrope.cpp" />
     <ClCompile Include="code\widgets\widgettestcolliders.cpp" />
@@ -231,6 +235,8 @@
     <ClInclude Include="code\defines.h" />
     <ClInclude Include="code\forces.h" />
     <ClInclude Include="code\glutils.h" />
+    <QtMoc Include="code\widgets\widgetnbody.h" />
+    <QtMoc Include="code\scenes\scenenbody.h" />
     <QtMoc Include="code\glwidget.h" />
     <ClInclude Include="code\integrators.h" />
     <QtMoc Include="code\mainwindow.h" />
