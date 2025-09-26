@@ -277,6 +277,7 @@
     <QtUic Include="forms\mainwindow.ui" />
     <QtUic Include="forms\widgetcloth.ui" />
     <QtUic Include="forms\widgetfountain.ui" />
+    <QtUic Include="forms\widgetnbody.ui" />
     <QtUic Include="forms\widgetprojectiles.ui" />
     <QtUic Include="forms\widgetrope.ui" />
     <QtUic Include="forms\widgettestcolliders.ui" />
