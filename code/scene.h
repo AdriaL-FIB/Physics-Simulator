@@ -5,6 +5,7 @@
 #include <QMouseEvent>
 #include <QOpenGLBuffer>
 #include "camera.h"
+#include "integrators.h"
 
 class Scene : public QObject
 {
@@ -35,7 +36,13 @@ public:
         }
         buffers.clear();
     }
-
+protected:
+    Integrator* createIntegrator(int type);
+    inline const std::vector<std::string> getIntegratorNames() {
+        return {
+            "Euler", "Symplectic Euler", "Implicit Euler", "Midpoint", "---", "RK2", "RK4", "Verlet"
+        };
+    }
 protected:
     std::vector<QOpenGLBuffer*> buffers;
 };

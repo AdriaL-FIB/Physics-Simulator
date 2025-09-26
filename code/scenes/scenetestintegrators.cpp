@@ -125,17 +125,7 @@ void SceneTestIntegrators::reset()
     oscillationNumerical.clear();
 
     if (integrator) delete integrator;
-    switch (widget->getIntegratorType()) {
-        case 0: integrator = new IntegratorEuler(); break;
-        case 1: integrator = new IntegratorSymplecticEuler(); break;
-        case 2: integrator = new IntegratorImplicitEuler(); break;
-        case 3: integrator = new IntegratorMidpoint(); break;
-        //case 4: break;
-        case 5: integrator = new IntegratorRK2(); break;
-        case 6: integrator = new IntegratorRK4(); break;
-        case 7: integrator = new IntegratorVerlet(); break;
-        default: integrator = nullptr; break;
-    }
+    integrator = createIntegrator(widget->getIntegratorType());
 
     firstIteration = true;
     particleSystem.setTime(0);

@@ -22,18 +22,21 @@ SOURCES += \
     code/mainwindow.cpp \
     code/model.cpp \
     code/particlesystem.cpp \
+    code/scene.cpp \
     code/scenes/scenecloth.cpp \
     code/scenes/scenefountain.cpp \
     code/scenes/sceneprojectiles.cpp \
     code/scenes/scenerope.cpp \
     code/scenes/scenetestcolliders.cpp \
     code/scenes/scenetestintegrators.cpp \
+    code/scenes/scenenbody.cpp \
     code/widgets/widgetcloth.cpp \
     code/widgets/widgetfountain.cpp \
     code/widgets/widgetprojectiles.cpp \
     code/widgets/widgetrope.cpp \
     code/widgets/widgettestcolliders.cpp \
     code/widgets/widgettestintegrators.cpp \
+    code/widgets/widgetnbody.cpp \
 
 HEADERS += \
     code/camera.h \
@@ -54,12 +57,14 @@ HEADERS += \
     code/scenes/scenerope.h \
     code/scenes/scenetestcolliders.h \
     code/scenes/scenetestintegrators.h \
+    code/scenes/scenenbody.h \
     code/widgets/widgetcloth.h \
     code/widgets/widgetfountain.h \
     code/widgets/widgetprojectiles.h \
     code/widgets/widgetrope.h \
     code/widgets/widgettestcolliders.h \
     code/widgets/widgettestintegrators.h \
+    code/widgets/widgetnbody.h \
 
 FORMS += \
     forms/mainwindow.ui \
@@ -69,5 +74,6 @@ FORMS += \
     forms/widgetrope.ui \
     forms/widgettestcolliders.ui \
     forms/widgettestintegrators.ui \
+    forms/widgetnbody.ui \
 
 RESOURCES += shaders.qrc

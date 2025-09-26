@@ -4,6 +4,7 @@
 #include "scenefountain.h"
 #include "scenerope.h"
 #include "scenecloth.h"
+#include "scenenbody.h"
 #include "scenetestintegrators.h"
 #include "scenetestcolliders.h"
 
@@ -29,6 +30,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionSceneFountain,   &QAction::triggered, this, [=](void){ changeScene(new SceneFountain()); });
     connect(ui->actionSceneRope,       &QAction::triggered, this, [=](void){ changeScene(new SceneRope()); });
     connect(ui->actionSceneCloth,      &QAction::triggered, this, [=](void){ changeScene(new SceneCloth()); });
+    connect(ui->actionSceneN_Body,     &QAction::triggered, this, [=](void){ changeScene(new SceneNBody()); });
     connect(ui->actionSceneTestIntegrators, &QAction::triggered, this, [=](void){ changeScene(new SceneTestIntegrators()); });
     connect(ui->actionSceneTestColliders,   &QAction::triggered, this, [=](void){ changeScene(new SceneTestColliders()); });
 }

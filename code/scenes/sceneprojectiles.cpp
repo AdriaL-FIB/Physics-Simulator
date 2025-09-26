@@ -8,9 +8,7 @@
 SceneProjectiles::SceneProjectiles() {
     widget = new WidgetProjectiles();
 
-    const std::vector<std::string> solvers = {
-        "Euler", "Symplectic Euler", "Midpoint", "RK2"
-    };
+    const std::vector<std::string> solvers = getIntegratorNames();
     widget->setSolverTypes(solvers);
     widget->setSolver1(0); // Euler
     widget->setSolver2(1); // Symplectic Euler
@@ -103,14 +101,14 @@ void SceneProjectiles::initialize() {
 }
 
 
-Integrator* createIntegrator(int type) {
-    switch(type) {
-        case 0: return new IntegratorEuler();
-        case 1: return new IntegratorSymplecticEuler();
-        case 2: return new IntegratorVerlet();
-        default: return nullptr;
-    }
-}
+// Integrator* createIntegrator(int type) {
+//     switch(type) {
+//         case 0: return new IntegratorEuler();
+//         case 1: return new IntegratorSymplecticEuler();
+//         case 2: return new IntegratorVerlet();
+//         default: return nullptr;
+//     }
+// }
 
 
 void SceneProjectiles::reset() {

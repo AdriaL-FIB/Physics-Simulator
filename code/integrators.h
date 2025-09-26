@@ -3,6 +3,8 @@
 
 #include "particlesystem.h"
 
+#include <iostream>
+
 class Integrator {
 public:
     Integrator() {};
@@ -52,6 +54,14 @@ class IntegratorVerlet : public Integrator {
 public:
     virtual void step(ParticleSystem& system, double dt);
     double kd = 1;
+};
+
+class IntegratorEmpty : public Integrator {
+public:
+    IntegratorEmpty() {
+        std::cout << "Empty integrator created" << std::endl;
+    }
+    virtual void step(ParticleSystem& system, double dt) {};
 };
 
 

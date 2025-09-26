@@ -42,7 +42,7 @@
             <string>Time step:</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -110,7 +110,7 @@
             <string>No scene loaded</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignCenter</set>
+            <set>Qt::AlignmentFlag::AlignCenter</set>
            </property>
           </widget>
          </item>
@@ -137,7 +137,7 @@
      <x>0</x>
      <y>0</y>
      <width>1000</width>
-     <height>22</height>
+     <height>30</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuScene">
@@ -148,6 +148,7 @@
     <addaction name="actionSceneFountain"/>
     <addaction name="actionSceneRope"/>
     <addaction name="actionSceneCloth"/>
+    <addaction name="actionSceneN_Body"/>
     <addaction name="actionSceneTestIntegrators"/>
     <addaction name="actionSceneTestColliders"/>
    </widget>
@@ -212,6 +213,11 @@
   <action name="actionSceneRope">
    <property name="text">
     <string>Elastic rope</string>
+   </property>
+  </action>
+  <action name="actionSceneN_Body">
+   <property name="text">
+    <string>N-Body</string>
    </property>
   </action>
  </widget>

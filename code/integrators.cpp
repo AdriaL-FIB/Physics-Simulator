@@ -120,10 +120,8 @@ void IntegratorMidpoint::step(ParticleSystem &system, double dt) {
     Vecd x1 = x0 + (dt/2)*dx; // updates position and velocity
     system.setState(x1);
 
-    // Required?
     system.setTime(t0+dt/2);
     system.updateForces();
-    // ---------
     
     Vecd dx_mid = system.getDerivative();
     Vecd x = x0 + dt * dx_mid;
