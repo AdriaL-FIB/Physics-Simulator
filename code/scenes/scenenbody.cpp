@@ -8,6 +8,8 @@
 SceneNBody::SceneNBody() {
     widget = new WidgetNBody();
 
+    widget->setSolverTypes(this->getIntegratorNames());
+
 }
 
 SceneNBody::~SceneNBody() {

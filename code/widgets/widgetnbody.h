@@ -23,6 +23,8 @@ public:
     double getSmoothingB()     const;
     bool   drawTrajectories()  const;
 
+    void setSolverTypes(const std::vector<std::string>& solvers);
+
 signals:
     void drawTrajectoriesChanged();
 

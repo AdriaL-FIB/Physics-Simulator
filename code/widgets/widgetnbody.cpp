@@ -43,3 +43,13 @@ double WidgetNBody::getSmoothingB() const {
 bool WidgetNBody::drawTrajectories() const {
     return ui->trajectory->isChecked();
 }
+
+void WidgetNBody::setSolverTypes(const std::vector<std::string>& solvers) {
+    ui->integrator->clear();
+
+    for (const std::string& sname : solvers) {
+        ui->integrator->addItem(QString::fromStdString(sname));
+    }
+
+    ui->integrator->setCurrentIndex(0);
+}
