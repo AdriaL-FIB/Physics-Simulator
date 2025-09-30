@@ -52,7 +52,7 @@ protected:
     unsigned int numFacesSphereS = 0, numFacesSphereL = 0;
     bool showParticles;
 
-    IntegratorEuler integrator;
+    Integrator* integrator = nullptr;
     ParticleSystem system;
     ForceConstAcceleration* fGravity = nullptr;
     std::vector<Particle*> particles;

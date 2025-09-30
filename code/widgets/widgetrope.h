@@ -25,6 +25,9 @@ public:
     bool anchorRopeEnd()      const;
     bool showParticles()      const;
     int getStartConfig()      const;
+    int getSelectedIntegrator() const;
+
+    void setSolverTypes(const std::vector<std::string>& solvers);
 
 signals:
     void updatedParameters();

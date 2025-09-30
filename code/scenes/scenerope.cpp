@@ -9,6 +9,7 @@ SceneRope::SceneRope() {
     widget = new WidgetRope();
     connect(widget, SIGNAL(updatedParameters()),
             this, SLOT(updateSimParams()));
+    widget->setSolverTypes(this->getIntegratorNames());
 }
 
 SceneRope::~SceneRope() {
@@ -68,6 +69,9 @@ void SceneRope::reset()
 {
     // we only update numParticles on resets
     updateSimParams();
+
+    if (integrator) delete integrator;
+    integrator = createIntegrator(widget->getSelectedIntegrator());
 
     // reset particles
     system.clearParticles();
@@ -269,7 +273,7 @@ void SceneRope::update(double dt)
 {
     // integration step
     Vecd ppos = system.getPositions();
-    integrator.step(system, dt);
+    integrator->step(system, dt);
     system.setPreviousPositions(ppos);
     deltaTime = dt;
 

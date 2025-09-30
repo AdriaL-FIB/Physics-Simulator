@@ -54,3 +54,17 @@ bool WidgetRope::showParticles() const {
 int WidgetRope::getStartConfig() const {
     return ui->startConfig->currentIndex();
 }
+
+int WidgetRope::getSelectedIntegrator() const {
+    return ui->comboBox->currentIndex();
+}
+
+void WidgetRope::setSolverTypes(const std::vector<std::string>& solvers) {
+    ui->comboBox->clear();
+
+    for (const std::string& sname : solvers) {
+        ui->comboBox->addItem(QString::fromStdString(sname));
+    }
+
+    ui->comboBox->setCurrentIndex(0);
+}

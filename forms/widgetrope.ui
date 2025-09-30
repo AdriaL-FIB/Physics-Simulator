@@ -14,14 +14,14 @@
    <string>Form</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
-   <item row="0" column="0">
+   <item row="1" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
       <string>Gravity</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
+   <item row="1" column="1">
     <widget class="QDoubleSpinBox" name="gravity">
      <property name="maximum">
       <double>100.000000000000000</double>
@@ -34,14 +34,14 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QLabel" name="label_3">
      <property name="text">
       <string>Spring stiffness</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="2" column="1">
     <widget class="QDoubleSpinBox" name="springStiffness">
      <property name="maximum">
       <double>1000.000000000000000</double>
@@ -54,14 +54,14 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="label_6">
      <property name="text">
       <string>Spring damp</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="3" column="1">
     <widget class="QDoubleSpinBox" name="springDamping">
      <property name="maximum">
       <double>1.000000000000000</double>
@@ -74,14 +74,14 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item row="4" column="0">
     <widget class="QLabel" name="label_2">
      <property name="text">
       <string>Rope length</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
+   <item row="4" column="1">
     <widget class="QDoubleSpinBox" name="ropeLength">
      <property name="maximum">
       <double>200.000000000000000</double>
@@ -94,14 +94,14 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
+   <item row="5" column="0">
     <widget class="QLabel" name="label_4">
      <property name="text">
       <string>Num particles</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
+   <item row="5" column="1">
     <widget class="QSpinBox" name="numParticles">
      <property name="minimum">
       <number>2</number>
@@ -117,14 +117,14 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
+   <item row="6" column="0">
     <widget class="QLabel" name="label_5">
      <property name="text">
       <string>Particle radius</string>
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
+   <item row="6" column="1">
     <widget class="QDoubleSpinBox" name="particleScale">
      <property name="maximum">
       <double>100.000000000000000</double>
@@ -137,41 +137,14 @@
      </property>
     </widget>
    </item>
-   <item row="7" column="0" colspan="2">
-    <widget class="QCheckBox" name="checkCollisions">
-     <property name="text">
-      <string>Check collisions</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="8" column="0" colspan="2">
-    <widget class="QCheckBox" name="anchoredEnd">
-     <property name="text">
-      <string>Anchor rope end</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="10" column="0" colspan="2">
-    <widget class="QPushButton" name="btnUpdate">
-     <property name="text">
-      <string>Update</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0">
+   <item row="7" column="0">
     <widget class="QLabel" name="label_7">
      <property name="text">
       <string>Start config</string>
      </property>
     </widget>
    </item>
-   <item row="6" column="1">
+   <item row="7" column="1">
     <widget class="QComboBox" name="startConfig">
      <item>
       <property name="text">
@@ -190,7 +163,27 @@
      </item>
     </widget>
    </item>
+   <item row="8" column="0" colspan="2">
+    <widget class="QCheckBox" name="checkCollisions">
+     <property name="text">
+      <string>Check collisions</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
    <item row="9" column="0" colspan="2">
+    <widget class="QCheckBox" name="anchoredEnd">
+     <property name="text">
+      <string>Anchor rope end</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0" colspan="2">
     <widget class="QCheckBox" name="showParticles">
      <property name="text">
       <string>Show particles</string>
@@ -199,6 +192,16 @@
       <bool>true</bool>
      </property>
     </widget>
+   </item>
+   <item row="11" column="0" colspan="2">
+    <widget class="QPushButton" name="btnUpdate">
+     <property name="text">
+      <string>Update</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="QComboBox" name="comboBox"/>
    </item>
   </layout>
  </widget>

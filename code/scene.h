@@ -36,7 +36,7 @@ public:
         }
         buffers.clear();
     }
-protected:
+public:
     Integrator* createIntegrator(int type);
     inline const std::vector<std::string> getIntegratorNames() {
         return {

@@ -24,7 +24,7 @@ void ForceSpring::apply() {
     double norm = (p2->pos - p1->pos).norm();
     Vec3 udir = (p2->pos - p1->pos)/norm;
 
-    Vec3 F = (this->kd * (norm - this->L) + this->kd * (p2->vel - p1->vel).dot(udir)) * (udir);
+    Vec3 F = (this->ks * (norm - this->L) + this->kd * (p2->vel - p1->vel).dot(udir)) * (udir);
 
     p1->force += F;
     p2->force -= F;

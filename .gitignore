@@ -16,3 +16,4 @@ Simulations.qtvscr
 moc_*.cpp
 moc_*.h
 qrc_shaders.cpp
+cpp.hint
