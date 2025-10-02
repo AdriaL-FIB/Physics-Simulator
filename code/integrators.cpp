@@ -30,29 +30,58 @@ void IntegratorSymplecticEuler::step(ParticleSystem &system, double dt) {
 void IntegratorImplicitEuler::step(ParticleSystem& system, double dt) {
     double t0 = system.getTime();
     Vecd X0 = system.getState();
+    
+    // Taylor method
 
-    // Newton-Raphson method
+    int N = system.getStateSize();
 
-    Vecd dx = system.getDerivative();
-    Vecd X_guess = X0 + dt * dx;
+    Vecd masses = system.getMasses();
 
-    for (int i = 0; i < this->MAX_NEWTON_ITERATIONS; ++i) {
-        Vecd b = -evaluateResiudal(system, X_guess, dt);
-        
-        Matd A = computeJacobi(system, X_guess, dt);
-
-        Vecd deltaX = A.colPivHouseholderQr().solve(b);
-
-        X_guess += deltaX;
-
-        if (deltaX.norm() < this->CONVERGENCE_THRESHOLD) {
-            break;
+    Vecd mass_vec(N);
+    for (int i = 0; i < N; i += Particle::PhaseDimension) {
+        for (int j = 0; j < Particle::PhaseDimension; ++j) {
+            mass_vec(i + j) = masses(i);
         }
     }
 
-    system.setState(X_guess);
+    Matd M = mass_vec.asDiagonal();
+
+    Matd K = computeJacobi(system, X0, dt);
+
+    Matd A = M - dt * dt * K;
+
+    Vecd b = M * system.getVelocities() + dt * system.getForces();
+
+    Vecd v1 = A.colPivHouseholderQr().solve(b);
+
+    Vecd x1 = system.getPositions() + dt * v1;
+
+    system.setPositions(x1);
+    system.setVelocities(v1);
     system.setTime(t0 + dt);
-    system.updateForces();
+
+    // Newton-Raphson method
+
+    //Vecd dx = system.getDerivative();
+    //Vecd X_guess = X0 + dt * dx;
+
+    //for (int i = 0; i < this->MAX_NEWTON_ITERATIONS; ++i) {
+    //    Vecd b = -evaluateResiudal(system, X_guess, dt);
+    //    
+    //    Matd A = computeJacobi(system, X_guess, dt);
+
+    //    Vecd deltaX = A.colPivHouseholderQr().solve(b);
+
+    //    X_guess += deltaX;
+
+    //    if (deltaX.norm() < this->CONVERGENCE_THRESHOLD) {
+    //        break;
+    //    }
+    //}
+
+    //system.setState(X_guess);
+    //system.setTime(t0 + dt);
+    //system.updateForces();
 
 }
 
@@ -75,14 +104,14 @@ Vecd IntegratorImplicitEuler::evaluateResiudal(ParticleSystem& system, const Vec
     return G;
 }
 
-Matd IntegratorImplicitEuler::computeJacobi(ParticleSystem& system, const Vecd& XGuess, double dt) {
+Matd IntegratorImplicitEuler::computeJacobi(ParticleSystem& system, const Vecd& X, double dt) {
     double t0 = system.getTime();
     Vecd X0 = system.getState();
 
     int N = system.getStateSize();
     const double epsilon = 1e-6;
 
-    system.setState(XGuess);
+    system.setState(X);
     system.setTime(t0 + dt);
     system.updateForces();
 
@@ -92,7 +121,7 @@ Matd IntegratorImplicitEuler::computeJacobi(ParticleSystem& system, const Vecd& 
 
     // Change 1 component at a time
     for (int j = 0; j < N; ++j) {
-        Vecd epsilonState = XGuess;
+        Vecd epsilonState = X;
         epsilonState[j] += epsilon;
         
         system.setState(epsilonState);

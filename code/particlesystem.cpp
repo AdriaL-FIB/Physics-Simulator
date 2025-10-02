@@ -101,6 +101,26 @@ Vecd ParticleSystem::getPreviousPositions() const {
     return res;
 }
 
+Vecd ParticleSystem::getMasses() const
+{
+    Vecd res(this->getNumParticles());
+    for (unsigned int i = 0; i < particles.size(); i++) {
+        res[i] = particles[i]->mass;
+    }
+    return res;
+}
+
+Vecd ParticleSystem::getForces() const
+{
+    Vecd res(3*this->getNumParticles());
+    for (unsigned int i = 0; i < particles.size(); i++) {
+        res[3*i  ] = particles[i]->force[0];
+        res[3*i+1] = particles[i]->force[1];
+        res[3*i+2] = particles[i]->force[2];
+    }
+    return res;
+}
+
 void ParticleSystem::setPositions(const Vecd& pos) {
     for (unsigned int i = 0; i < particles.size(); i++) {
         particles[i]->pos[0] = pos[3*i    ];

@@ -29,6 +29,8 @@ public:
     virtual Vecd getVelocities()        const;
     virtual Vecd getAccelerations()     const;
     virtual Vecd getPreviousPositions() const;
+    virtual Vecd getMasses() const;
+    virtual Vecd getForces() const;
     virtual void setPositions(const Vecd& pos);
     virtual void setVelocities(const Vecd& vel);
     virtual void setPreviousPositions(const Vecd& pos);
