@@ -32,6 +32,8 @@ public:
 
     void setInfo(const QString& txt);
 
+    void setSolverTypes(const std::vector<std::string>& solvers);
+
 protected slots:
     void changedParameter();
     void setCriticalDamp();

@@ -40,7 +40,8 @@ public:
     Integrator* createIntegrator(int type);
     inline const std::vector<std::string> getIntegratorNames() {
         return {
-            "Euler", "Symplectic Euler", "Implicit Euler", "Midpoint", "---", "RK2", "RK4", "Verlet"
+            "Euler", "Symplectic Euler", "Implicit Euler (Taylor)", "Implicit Euler (Newton)",
+            "Midpoint", "Leapfrog (Not Impl)", "RK2 (Heun)", "RK4", "Verlet", "Velocity Verlet (Not Impl)"
         };
     }
 protected:

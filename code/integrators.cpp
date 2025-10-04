@@ -31,58 +31,102 @@ void IntegratorImplicitEuler::step(ParticleSystem& system, double dt) {
     double t0 = system.getTime();
     Vecd X0 = system.getState();
     
-    // Taylor method
 
-    int N = system.getStateSize();
+    if (method == 0) {
+        // Taylor method
 
-    Vecd masses = system.getMasses();
+        int dim = 3;
+        int numParticles = system.getNumParticles();
+        int N = dim * numParticles;
 
-    Vecd mass_vec(N);
-    for (int i = 0; i < N; i += Particle::PhaseDimension) {
-        for (int j = 0; j < Particle::PhaseDimension; ++j) {
-            mass_vec(i + j) = masses(i);
+        Vecd masses = system.getMasses();
+
+        Vecd mass_vec(N);
+        for (int i = 0; i < numParticles; ++i) {
+            mass_vec(dim * i + 0) = masses(i);
+            mass_vec(dim * i + 1) = masses(i);
+            mass_vec(dim * i + 2) = masses(i);
         }
+
+        Matd M = mass_vec.asDiagonal();
+
+        Matd K = computeStiffnessMatrix(system);
+
+        Matd A = M - dt * dt * K;
+
+        Vecd b = M * system.getVelocities() + dt * system.getForces();
+
+        Vecd v1 = A.colPivHouseholderQr().solve(b);
+
+        Vecd x1 = system.getPositions() + dt * v1;
+
+        system.setPositions(x1);
+        system.setVelocities(v1);
+        system.setTime(t0 + dt);
+        system.updateForces();
+    }
+    else {
+        // Newton-Raphson method
+
+        Vecd dx = system.getDerivative();
+        Vecd X_guess = X0 + dt * dx;
+
+        for (int i = 0; i < this->MAX_NEWTON_ITERATIONS; ++i) {
+            Vecd b = -evaluateResiudal(system, X_guess, dt);
+        
+            Matd A = computeJacobi(system, X_guess, dt);
+
+            Vecd deltaX = A.colPivHouseholderQr().solve(b);
+
+            X_guess += deltaX;
+
+            if (deltaX.norm() < this->CONVERGENCE_THRESHOLD) {
+                break;
+            }
+        }
+
+        system.setState(X_guess);
+        system.setTime(t0 + dt);
+        system.updateForces();
+    }
+}
+
+Matd IntegratorImplicitEuler::computeStiffnessMatrix(ParticleSystem& system)
+{
+    double t0 = system.getTime();
+    Vecd X0 = system.getState();
+
+    int dim = 3;
+    int N = dim * system.getNumParticles();
+    const double epsilon = 1e-6;
+
+
+    Vecd f = system.getForces();
+
+    Matd J_f(N, N);
+
+    Vecd P0 = system.getPositions();
+
+    // Change 1 component at a time
+    for (int j = 0; j < N; ++j) {
+
+        Vecd epsilonPos = P0;
+        epsilonPos[j] += epsilon;
+
+        system.setPositions(epsilonPos);
+        system.updateForces();
+
+        Vecd f1 = system.getForces();
+
+        J_f.col(j) = (f1 - f) / epsilon;
     }
 
-    Matd M = mass_vec.asDiagonal();
+    // Restore state
+    system.setState(X0);
+    system.setTime(t0);
+    system.updateForces();
 
-    Matd K = computeJacobi(system, X0, dt);
-
-    Matd A = M - dt * dt * K;
-
-    Vecd b = M * system.getVelocities() + dt * system.getForces();
-
-    Vecd v1 = A.colPivHouseholderQr().solve(b);
-
-    Vecd x1 = system.getPositions() + dt * v1;
-
-    system.setPositions(x1);
-    system.setVelocities(v1);
-    system.setTime(t0 + dt);
-
-    // Newton-Raphson method
-
-    //Vecd dx = system.getDerivative();
-    //Vecd X_guess = X0 + dt * dx;
-
-    //for (int i = 0; i < this->MAX_NEWTON_ITERATIONS; ++i) {
-    //    Vecd b = -evaluateResiudal(system, X_guess, dt);
-    //    
-    //    Matd A = computeJacobi(system, X_guess, dt);
-
-    //    Vecd deltaX = A.colPivHouseholderQr().solve(b);
-
-    //    X_guess += deltaX;
-
-    //    if (deltaX.norm() < this->CONVERGENCE_THRESHOLD) {
-    //        break;
-    //    }
-    //}
-
-    //system.setState(X_guess);
-    //system.setTime(t0 + dt);
-    //system.updateForces();
-
+    return J_f;
 }
 
 Vecd IntegratorImplicitEuler::evaluateResiudal(ParticleSystem& system, const Vecd& XGuess, double dt) {
@@ -132,6 +176,7 @@ Matd IntegratorImplicitEuler::computeJacobi(ParticleSystem& system, const Vecd& 
         J_f.col(j) = (dX_epsilon - dX_base) / epsilon;
     }
 
+    // A = I - dt * J_f
     Matd A = Matd::Identity(N, N) - dt * J_f;
 
     // Restore state

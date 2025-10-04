@@ -49,6 +49,7 @@ protected:
 
 SceneTestIntegrators::SceneTestIntegrators() {
     widget = new WidgetTestIntegrators();
+    widget->setSolverTypes(this->getIntegratorNames());
 }
 
 SceneTestIntegrators::~SceneTestIntegrators() {

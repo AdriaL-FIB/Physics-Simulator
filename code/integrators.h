@@ -26,12 +26,18 @@ public:
 
 class IntegratorImplicitEuler : public Integrator {
 public:
+    IntegratorImplicitEuler(int method = 0) { this->method = method; }
+
     virtual void step(ParticleSystem& system, double dt);
     const int MAX_NEWTON_ITERATIONS = 100;
     const double CONVERGENCE_THRESHOLD = 1e-3;
 
+	int method; // 0: Taylor, 1: Newton-Raphson
+
     Vecd evaluateResiudal(ParticleSystem& system, const Vecd& XGuess, double dt);
     Matd computeJacobi(ParticleSystem& system, const Vecd& XGuess, double dt);
+
+    Matd computeStiffnessMatrix(ParticleSystem& system);
 };
 
 

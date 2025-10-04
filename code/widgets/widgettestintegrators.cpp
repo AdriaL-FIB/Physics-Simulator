@@ -102,3 +102,10 @@ void WidgetTestIntegrators::setInfo(const QString &txt)
 {
     ui->textSimVals->setText(txt);
 }
+
+void WidgetTestIntegrators::setSolverTypes(const std::vector<std::string>& solvers) {
+    ui->integrator->clear();
+    for (const std::string& s : solvers) {
+        ui->integrator->addItem(QString::fromStdString(s));
+    }
+}
