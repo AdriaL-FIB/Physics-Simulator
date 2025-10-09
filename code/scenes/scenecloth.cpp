@@ -119,7 +119,7 @@ void SceneCloth::reset()
             int idx = i*numParticlesY + j;
 
             // TODO: you can play here with different start positions and/or fixed particles
-            fixedParticle[idx] = false;
+            fixedParticle[idx] = idx == 0 or idx == numParticlesY * (numParticlesX-1);
             double tx = i*edgeX - 0.5*clothWidth;
             double ty = j*edgeY - 0.5*clothHeight;
             Vec3 pos = Vec3(ty+edgeY, 70 - tx - edgeX, 0);
@@ -143,6 +143,9 @@ void SceneCloth::reset()
 
     // TODO: create spring forces
     // Code for PROVOT layout
+
+
+
     updateSprings();
 
     // update index buffer
@@ -179,10 +182,16 @@ void SceneCloth::updateSprings()
     // here I update all ks and kd parameters.
     // idea: if you want to enable/disable a spring type, you can set ks to 0 for these
     for (ForceSpring* f : springsStretch) {
+        f->setSpringConstant(ks);
+        f->setDampingCoeff(kd);
     }
     for (ForceSpring* f : springsShear) {
+        f->setSpringConstant(ks);
+        f->setDampingCoeff(kd);
     }
     for (ForceSpring* f : springsBend) {
+        f->setSpringConstant(ks);
+        f->setDampingCoeff(kd);
     }
 }
 

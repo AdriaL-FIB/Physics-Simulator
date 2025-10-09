@@ -1,4 +1,5 @@
 #include "forces.h"
+#include "math.h"
 
 void ForceConstAcceleration::apply() {
     for (Particle* p : particles) {
@@ -12,7 +13,7 @@ void ForceDrag::apply() {
         p->force += -this->klinear * p->vel;
 
         // Newton drag:
-        p->force += -this->kquadratic * p->vel.cwiseAbs().cwiseProduct(p->vel);
+        //p->force += -this->kquadratic * p->vel.cwiseAbs().cwiseProduct(p->vel);
     }
 }
 
@@ -36,8 +37,11 @@ void ForceGravitation::apply() {
         Particle* p2 = particles[j];
 
         Vec3 diff = p2->pos - p1->pos;
+        double distSquared = diff.squaredNorm();
 
-        Vec3 F = (G * p1->mass * p2->mass) / diff.squaredNorm() * diff / diff.norm();
+        Vec3 F = (G * p1->mass * p2->mass) / distSquared * diff / diff.norm();
+
+        F *= 2 / (1 + exp(-a * distSquared / (b * b))) - 1;
 
         p2->force -= F;
     }
