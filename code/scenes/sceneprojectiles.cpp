@@ -5,7 +5,9 @@
 #include <iostream>
 
 
-SceneProjectiles::SceneProjectiles() {
+SceneProjectiles::SceneProjectiles() :
+    colliderPlane(Vec3(0,1,0), 0)
+{
     widget = new WidgetProjectiles();
 
     const std::vector<std::string> solvers = getIntegratorNames();
@@ -129,10 +131,13 @@ void SceneProjectiles::reset() {
     const double zdist = 15;
     systemAnalytic.getParticle(0)->pos = Vec3(0, shotHeight, 0);
     systemAnalytic.getParticle(0)->vel = shotSpeed*Vec3(std::cos(shotAngle), std::sin(shotAngle), 0);
+    systemAnalytic.setTime(0);
     systemNumerical1.getParticle(0)->pos = Vec3(0, shotHeight, zdist);
     systemNumerical1.getParticle(0)->vel = shotSpeed*Vec3(std::cos(shotAngle), std::sin(shotAngle), 0);
+    systemNumerical1.setTime(0);
     systemNumerical2.getParticle(0)->pos = Vec3(0, shotHeight, -zdist);
     systemNumerical2.getParticle(0)->vel = shotSpeed*Vec3(std::cos(shotAngle), std::sin(shotAngle), 0);
+    systemNumerical2.setTime(0);
 
     // update gravity accelerations
     fGravity1->setAcceleration(Vec3(0, -gravityAccel, 0));
@@ -215,6 +220,11 @@ void SceneProjectiles::update(double dt) {
 
             // stop sim for this system
             system2active = false;
+        }
+
+        Collision colInfo;
+        if (colliderPlane.testCollision(p, colInfo)) {
+            colliderPlane.resolveCollision(p, colInfo, 0.5, 0.2);
         }
 
         // record trajectory

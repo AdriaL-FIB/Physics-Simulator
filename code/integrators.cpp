@@ -6,6 +6,9 @@ void IntegratorEuler::step(ParticleSystem &system, double dt) {
     Vecd x0 = system.getState();
     Vecd dx = system.getDerivative();
     Vecd x1 = x0 + dt*dx;
+
+    system.setPreviousPositions(system.getPositions());
+
     system.setState(x1);
     system.setTime(t0+dt);
     system.updateForces();
@@ -16,12 +19,14 @@ void IntegratorSymplecticEuler::step(ParticleSystem &system, double dt) {
     double t0 = system.getTime();
     Vecd x0 = system.getState();
 
-	Vecd v1 = system.getVelocities() + dt * system.getAccelerations(); // updates velocities
-	Vecd p1 = system.getPositions() + dt * v1; // updates positions
+    Vecd p0 = system.getPositions();
 
+	Vecd v1 = system.getVelocities() + dt * system.getAccelerations(); // updates velocities
+	Vecd p1 = p0 + dt * v1; // updates positions
 
 	system.setPositions(p1);
 	system.setVelocities(v1);
+    system.setPreviousPositions(p0);
     system.setTime(t0+dt);
     system.updateForces();
 }
@@ -56,18 +61,22 @@ void IntegratorImplicitEuler::step(ParticleSystem& system, double dt) {
 
         Vecd b = M * system.getVelocities() + dt * system.getForces();
 
+        // TODO: Change for another faster solver for this
         Vecd v1 = A.colPivHouseholderQr().solve(b);
 
-        Vecd x1 = system.getPositions() + dt * v1;
+        Vecd x0 = system.getPositions();
+        Vecd x1 = x0 + dt * v1;
 
         system.setPositions(x1);
         system.setVelocities(v1);
+        system.setPreviousPositions(x0);
         system.setTime(t0 + dt);
         system.updateForces();
     }
     else {
         // Newton-Raphson method
 
+        Vecd x0 = system.getPositions();
         Vecd dx = system.getDerivative();
         Vecd X_guess = X0 + dt * dx;
 
@@ -76,6 +85,7 @@ void IntegratorImplicitEuler::step(ParticleSystem& system, double dt) {
         
             Matd A = computeJacobi(system, X_guess, dt);
 
+            // TODO: Change for another faster solver for this
             Vecd deltaX = A.colPivHouseholderQr().solve(b);
 
             X_guess += deltaX;
@@ -84,6 +94,8 @@ void IntegratorImplicitEuler::step(ParticleSystem& system, double dt) {
                 break;
             }
         }
+
+        system.setPreviousPositions(x0);
 
         system.setState(X_guess);
         system.setTime(t0 + dt);
@@ -192,6 +204,9 @@ void IntegratorMidpoint::step(ParticleSystem &system, double dt) {
     Vecd x0 = system.getState();
     Vecd dx = system.getDerivative();
     Vecd x1 = x0 + (dt/2)*dx; // updates position and velocity
+
+    system.setPreviousPositions(system.getPositions());
+
     system.setState(x1);
 
     system.setTime(t0+dt/2);
@@ -210,6 +225,7 @@ void IntegratorRK2::step(ParticleSystem &system, double dt) {
     Vecd x1 = system.getState();
     Vecd k1 = system.getDerivative();
     Vecd x2 = x1 + dt * k1;
+    system.setPreviousPositions(system.getPositions());
     system.setState(x2);
 
     // Required?
@@ -229,6 +245,7 @@ void IntegratorRK4::step(ParticleSystem &system, double dt) {
     double t0 = system.getTime();
     Vecd x0 = system.getState();
     Vecd k1 = system.getDerivative();
+    system.setPreviousPositions(system.getPositions());
     
     Vecd xk2 = x0 + dt/2 * k1;
 

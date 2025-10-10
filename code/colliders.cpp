@@ -14,7 +14,7 @@ void Collider::resolveCollision(Particle* p, const Collision& col, double kElast
     Vec3 v_T = p->vel - v_N;
 
     Vec3 v_N1 = -kElastic * v_N;
-    Vec3 v_T1 = (1 - kFriction) * v_T1;
+    Vec3 v_T1 = (1 - kFriction) * v_T;
 
     Vec3 new_vel = v_N1 + v_T1;
 

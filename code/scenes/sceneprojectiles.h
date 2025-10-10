@@ -8,6 +8,7 @@
 #include "widgetprojectiles.h"
 #include "particlesystem.h"
 #include "integrators.h"
+#include "colliders.h"
 
 class SceneProjectiles : public Scene
 {
@@ -62,5 +63,7 @@ protected:
     double time = 0;
     double gravityAccel;
     double shotHeight, shotAngle, shotSpeed;
+
+    ColliderPlane colliderPlane;
 };
 #endif // SCENEPROJECTILES_H
