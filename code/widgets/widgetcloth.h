@@ -26,6 +26,9 @@ public:
 
     bool showParticles()       const;
 
+    int getIntegratorType() const;
+    void setSolverTypes(const std::vector<std::string>& solvers);
+
 signals:
     void updatedParameters();
     void freeAnchors();

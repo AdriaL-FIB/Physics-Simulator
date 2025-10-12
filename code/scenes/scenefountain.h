@@ -56,6 +56,8 @@ protected:
     ColliderSphere colliderSphere;
     ColliderAABB   colliderBox;
 
+    std::vector<Collider*> colliders;
+
     double kBounce, kFriction;
     double emitRate;
     double maxParticleLife;

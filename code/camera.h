@@ -42,7 +42,7 @@ public:
     QMatrix4x4 getPerspectiveMatrix() const;
     QMatrix4x4 getViewMatrix() const;
 
-    // ray
+    // ray normalized
     Vec3 getRayDir(int pixelX, int pixelY) const;
     Vec3 worldSpaceDisplacement(int dpixelsX, int dpixelsY, double distPlane = 1) const;
 

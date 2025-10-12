@@ -100,10 +100,13 @@ bool ColliderAABB::isInside(const Particle* p) const
 
 bool ColliderAABB::testCollision(const Particle* p, Collision& colInfo) const
 {
+    Vec3 expandedBmin = this->bmin - Vec3(p->radius, p->radius, p->radius);
+    Vec3 expandedBmax = this->bmax + Vec3(p->radius, p->radius, p->radius);
+
     Vec3 v = p->pos - p->prevPos;
 
-    Vec3 lmin = (this->bmin - p->prevPos).cwiseQuotient(v);
-    Vec3 lmax = (this->bmax - p->prevPos).cwiseQuotient(v);
+    Vec3 lmin = (expandedBmin - p->prevPos).cwiseQuotient(v);
+    Vec3 lmax = (expandedBmax - p->prevPos).cwiseQuotient(v);
 
     Vec3 l_near = lmin.cwiseMin(lmax);
     Vec3 l_far  = lmin.cwiseMax(lmax);

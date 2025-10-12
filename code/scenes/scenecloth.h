@@ -36,6 +36,18 @@ public:
 
     virtual QWidget* sceneUI() { return widget; }
 
+protected:
+    inline bool posOk(int i, int j) const {
+        return 0 <= i and i < numParticlesX and 0 <= j and j < numParticlesY;
+    }
+
+    inline int getIdx(int i, int j) const {
+        return i * numParticlesY + j;
+    }
+
+    ForceSpring* createSpringForceBetween(int i1, int j1, int i2, int j2, double ks = 0, double kd = 0);
+    ForceSpring* createSpringForceBetween(int i1, int j1, int i2, int j2, double l, double ks = 0, double kd = 0);
+
 public slots:
     void updateSprings();
     void updateSimParams();
@@ -59,7 +71,7 @@ protected:
     bool showParticles = true;
 
     // physics
-    IntegratorEuler integrator; // TODO: pick a better one
+    Integrator* integrator = nullptr;
     ParticleSystem system;
     ForceConstAcceleration* fGravity = nullptr;
     std::vector<ForceSpring*> springsStretch;

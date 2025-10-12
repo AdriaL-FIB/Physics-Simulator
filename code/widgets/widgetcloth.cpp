@@ -47,3 +47,17 @@ double WidgetCloth::getParticleRadius() const {
 bool WidgetCloth::showParticles() const {
     return ui->showParticles->isChecked();
 }
+
+int WidgetCloth::getIntegratorType() const {
+    return ui->integrator->currentIndex();
+}
+
+void WidgetCloth::setSolverTypes(const std::vector<std::string>& solvers) {
+    ui->integrator->clear();
+
+    for (const std::string& sname : solvers) {
+        ui->integrator->addItem(QString::fromStdString(sname));
+    }
+
+    ui->integrator->setCurrentIndex(0);
+}

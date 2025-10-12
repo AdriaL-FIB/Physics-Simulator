@@ -9,6 +9,7 @@ SceneCloth::SceneCloth() {
     widget = new WidgetCloth();
     connect(widget, SIGNAL(updatedParameters()), this, SLOT(updateSimParams()));
     connect(widget, SIGNAL(freeAnchors()), this, SLOT(freeAnchors()));
+    widget->setSolverTypes(getIntegratorNames());
 }
 
 SceneCloth::~SceneCloth() {
@@ -85,6 +86,9 @@ void SceneCloth::reset()
     // we only update numParticles on resets
     updateSimParams();
 
+    if (integrator) delete integrator;
+    integrator = createIntegrator(widget->getIntegratorType());
+
     // reset particles
     system.deleteParticles();
 
@@ -119,7 +123,7 @@ void SceneCloth::reset()
             int idx = i*numParticlesY + j;
 
             // TODO: you can play here with different start positions and/or fixed particles
-            fixedParticle[idx] = idx == 0 or idx == numParticlesY * (numParticlesX-1);
+            fixedParticle[idx] = idx == 0 or idx == numParticlesY - 1;
             double tx = i*edgeX - 0.5*clothWidth;
             double ty = j*edgeY - 0.5*clothHeight;
             Vec3 pos = Vec3(ty+edgeY, 70 - tx - edgeX, 0);
@@ -143,7 +147,31 @@ void SceneCloth::reset()
 
     // TODO: create spring forces
     // Code for PROVOT layout
+    for (int i = 0; i < numParticlesX; i++) {
+        for (int j = 0; j < numParticlesY; j++) {
+            int idx = getIdx(i, j);
 
+            Particle* p = system.getParticle(idx);
+
+            // Strech spring
+            ForceSpring* f = createSpringForceBetween(i, j, i, j + 1);
+            if (f) { springsStretch.push_back(f); system.addForce(f); }
+            f = createSpringForceBetween(i, j, i + 1, j);
+            if (f) { springsStretch.push_back(f); system.addForce(f); }
+
+            // Shear spring
+            f = createSpringForceBetween(i - 1, j - 1, i + 1, j + 1);
+            if (f) { springsShear.push_back(f); system.addForce(f); }
+            f = createSpringForceBetween(i - 1, j + 1, i + 1, j - 1);
+            if (f) { springsShear.push_back(f); system.addForce(f); }
+
+            // Bend
+            f = createSpringForceBetween(i, j - 2, i, j + 2);
+            if (f) { springsBend.push_back(f); system.addForce(f); }
+            f = createSpringForceBetween(i - 2, j, i + 2, j);
+            if (f) { springsBend.push_back(f); system.addForce(f); }
+        }
+    }
 
 
     updateSprings();
@@ -193,6 +221,28 @@ void SceneCloth::updateSprings()
         f->setSpringConstant(ks);
         f->setDampingCoeff(kd);
     }
+}
+
+ForceSpring* SceneCloth::createSpringForceBetween(int i1, int j1, int i2, int j2, double ks, double kd)
+{
+    if (not posOk(i1, j1)) return nullptr;
+    if (not posOk(i2, j2)) return nullptr;
+    Particle* p1 = system.getParticle(getIdx(i1, j1));
+    Particle* p2 = system.getParticle(getIdx(i2, j2));
+
+    double l = (p1->pos - p2->pos).norm();
+
+    return new ForceSpring(p1, p2, l, ks, kd);
+}
+
+ForceSpring* SceneCloth::createSpringForceBetween(int i1, int j1, int i2, int j2, double l, double ks, double kd)
+{
+    if (not posOk(i1, j1)) return nullptr;
+    if (not posOk(i2, j2)) return nullptr;
+    Particle* p1 = system.getParticle(getIdx(i1, j1));
+    Particle* p2 = system.getParticle(getIdx(i2, j2));
+
+    return new ForceSpring(p1, p2, l, ks, kd);
 }
 
 void SceneCloth::updateSimParams()
@@ -318,7 +368,7 @@ void SceneCloth::update(double dt)
 
     // integration step
     Vecd ppos = system.getPositions();
-    integrator.step(system, dt);
+    integrator->step(system, dt);
     system.setPreviousPositions(ppos);
 
     // user interaction
@@ -326,11 +376,37 @@ void SceneCloth::update(double dt)
         Particle* p = system.getParticle(selectedParticle);
         // p->pos = ?; TODO: assign cursor world position (see code, it's already computed)
         p->vel = Vec3(0,0,0);
+        p->pos = cursorWorldPos;
 
         // TODO: test and resolve for collisions during user movement
     }
 
     // TODO: relaxation
+
+    int relaxationIterations = 50;
+    double epsilon = 0.001;
+    for (int i = 0; i < relaxationIterations; ++i) {
+        for (ForceSpring* f : springsStretch) {
+            Particle* p1 = f->getParticle1();
+            Particle* p2 = f->getParticle2();
+
+            Vec3 dir = (p2->pos - p1->pos);
+
+            double L = f->getRestLength();
+            double currentLSq = dir.squaredNorm();
+            
+            if (std::abs(currentLSq - L * L) > epsilon*epsilon) {
+                double currentL = dir.norm();
+                double extraL = currentL - L;
+
+                double w1 = (not fixedParticle[p1->id]) ? 1 / p1->mass : 0;
+                double w2 = (not fixedParticle[p2->id]) ? 1 / p2->mass : 0;
+
+                p1->pos += w1 / (w1 + w2) *   dir * extraL / currentL;
+                p2->pos += w2 / (w1 + w2) * - dir * extraL / currentL;
+            }
+        }
+    }
 
     // collisions
     for (Particle* p : system.getParticles()) {
@@ -355,6 +431,15 @@ void SceneCloth::mousePressed(const QMouseEvent* e, const Camera& cam)
         selectedParticle = -1;
         for (int i = 0; i < numParticles; i++) {
             // TODO: point-ray dist to check if we select one particle
+            Particle* p = system.getParticle(i);
+            Vec3 L = p->pos - origin;
+            const double tca = L.dot(rayDir);
+            if (tca < 0) continue;
+            const double d2 = L.squaredNorm() - tca * tca;
+            if (d2 < p->radius * p->radius) {
+                selectedParticle = i;
+                break;
+            }
         }
 
         if (selectedParticle >= 0) {

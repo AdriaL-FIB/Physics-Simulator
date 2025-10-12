@@ -229,7 +229,7 @@ void IntegratorRK2::step(ParticleSystem &system, double dt) {
     system.setState(x2);
 
     // Required?
-    system.setTime(t1+dt);
+    system.setTime(t1+dt*0.5);
     system.updateForces();
     // ---------
 
