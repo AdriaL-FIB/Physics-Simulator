@@ -8,6 +8,7 @@
 #include "widgetcloth.h"
 #include "particlesystem.h"
 #include "integrators.h"
+#include "colliders.h"
 
 
 class SceneCloth : public Scene
@@ -77,6 +78,10 @@ protected:
     std::vector<ForceSpring*> springsStretch;
     std::vector<ForceSpring*> springsShear;
     std::vector<ForceSpring*> springsBend;
+    std::vector<Collider*> colliders;
+
+    ColliderSphere colliderBall;
+    ColliderAABB colliderCube, colliderWalls;
 
     // cloth properties
     std::vector<bool> fixedParticle;

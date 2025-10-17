@@ -75,10 +75,18 @@ void SceneCloth::initialize() {
     system.addForce(fGravity);
 
     // TODO: in my solution setup, these were the colliders
-    //colliderBall.setCenter(Vec3(40,-20,0));
-    //colliderBall.setRadius(30);
-    //colliderCube.setFromCenterSize(Vec3(-60,30,0), Vec3(60, 40, 60));
+
+
+    colliderBall.setCenter(Vec3(40,-20,0));
+    colliderBall.setRadius(30);
+    colliderCube.setFromCenterSize(Vec3(-60,-10,0), Vec3(60, 40, 60));
     //colliderWalls.setFromCenterSize(Vec3(0, 0, 0), Vec3(200, 200, 200));
+
+    // setup colliders
+    colliders.clear();
+    colliders.push_back(&colliderBall);
+    colliders.push_back(&colliderCube);
+    //colliders.push_back(&colliderWalls);
 }
 
 void SceneCloth::reset()
@@ -123,7 +131,7 @@ void SceneCloth::reset()
             int idx = i*numParticlesY + j;
 
             // TODO: you can play here with different start positions and/or fixed particles
-            fixedParticle[idx] = idx == 0 or idx == numParticlesY - 1;
+            fixedParticle[idx] = idx <= numParticlesY - 1;
             double tx = i*edgeX - 0.5*clothWidth;
             double ty = j*edgeY - 0.5*clothHeight;
             Vec3 pos = Vec3(ty+edgeY, 70 - tx - edgeX, 0);
@@ -311,8 +319,34 @@ void SceneCloth::paint(const Camera& camera)
             glFuncs->glDrawElements(GL_TRIANGLES, 3*numFacesSphereS, GL_UNSIGNED_INT, 0);
         }
     }
+  
+    // draw sphere collider (ball)
+    vaoSphereL->bind();
+    Vec3 cc = colliderBall.getCenter();
+    modelMat = QMatrix4x4();
+    modelMat.translate(cc[0], cc[1], cc[2]);
+    modelMat.scale(colliderBall.getRadius());
+    shaderPhong->setUniformValue("ModelMatrix", modelMat);
+    shaderPhong->setUniformValue("matdiff", 0.8f, 0.4f, 0.4f);
+    shaderPhong->setUniformValue("matspec", 0.0f, 0.0f, 0.0f);
+    shaderPhong->setUniformValue("matshin", 0.0f);
+    glFuncs->glDrawElements(GL_TRIANGLES, 3*numFacesSphereL, GL_UNSIGNED_INT, 0);
 
-    // TODO: draw colliders and walls
+    // draw box collider (cube)
+    vaoCube->bind();
+    cc = colliderCube.getCenter();
+    Vec3 hs = 0.5*colliderCube.getSize();
+    modelMat = QMatrix4x4();
+    modelMat.translate(cc[0], cc[1], cc[2]);
+    modelMat.scale(hs[0], hs[1], hs[2]);
+    shaderPhong->setUniformValue("ModelMatrix", modelMat);
+    shaderPhong->setUniformValue("matdiff", 0.4f, 0.8f, 0.4f);
+    shaderPhong->setUniformValue("matspec", 0.0f, 0.0f, 0.0f);
+    shaderPhong->setUniformValue("matshin", 0.0f);
+    glFuncs->glDrawElements(GL_TRIANGLES, 3*2*6, GL_UNSIGNED_INT, 0);
+
+    
+    vaoCube->release();
 
     shaderPhong->release();
 
@@ -409,10 +443,14 @@ void SceneCloth::update(double dt)
     }
 
     // collisions
+    Collision colInfo;
     for (Particle* p : system.getParticles()) {
-        // TODO: test and resolve collisions
+        for (Collider* c : colliders) {
+            if (c->testCollision(p, colInfo)) {
+                c->resolveCollision(p, colInfo, colBounce, colFriction);
+            }
+        }
     }
-
     // needed after we have done collisions and relaxation, since spring forces depend on p and v
     system.updateForces();
 }
