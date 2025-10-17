@@ -74,9 +74,9 @@ bool ColliderSphere::testCollision(const Particle* p, Collision& colInfo) const
     double l1 = (-b + sqrtD) / (2*a);
     double l2 = (-b - sqrtD) / (2*a);
 
-    double lo = std::min(l1, l2);
-    double hi = std::max(l1, l2);
-    double l = (0.0 <= lo && lo <= 1.0) ? lo : ((0.0 <= hi && hi <= 1.0) ? hi : -1.0);
+    // double l2 = std::min(l1, l2);
+    // double l1 = std::max(l1, l2);
+    double l = (0.0 <= l2 && l2 <= 1.0) ? l2 : ((0.0 <= l1 && l1 <= 1.0) ? l1 : -1.0);
 
     if (l < 0) return false;
 

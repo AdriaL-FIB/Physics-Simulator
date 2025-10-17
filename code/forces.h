@@ -128,3 +128,26 @@ protected:
 // Boids algorithm
 
 #endif // FORCES_H
+
+class ForceSPH : Force
+{
+public:
+    ForceSPH() { h = 0; }
+    ForceSPH(double h) {
+        this->h = h;
+        poly6Factor = 315.0 / (64.0 * M_PI * std::pow(h, 9));
+        spikyGradFactor = 45.0 / (M_PI * std::pow(h, 6));
+        viscosiyLaplacianFactor = 45.0 / (M_PI * std::pow(h, 5));
+    }
+
+    virtual void apply();
+    
+    double kernelPoly6(double rSqr);
+    Vec3 kernelGradientSpiky(Vec3 r);
+    double kernelLaplacianViscosity(double rSqr);
+protected:
+    double h;
+    double poly6Factor;
+    double spikyGradFactor;
+    double viscosiyLaplacianFactor;
+};

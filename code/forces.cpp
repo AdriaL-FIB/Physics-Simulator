@@ -46,3 +46,36 @@ void ForceGravitation::apply() {
         p2->force -= F;
     }
 }
+
+void ForceSPH::apply()
+{
+}
+
+double ForceSPH::kernelPoly6(double rSqr) // TODO: If I already have |r|, use r instead of sqr.
+{
+    if (rSqr > h * h) return 0;
+
+    double term = h*h - rSqr;
+
+    return poly6Factor * term * term * term;
+}
+
+Vec3 ForceSPH::kernelGradientSpiky(Vec3 r)
+{
+    double rMag = r.norm();
+
+    if (rMag <= 0.0 || rMag > h) {
+        return Vec3(0.0, 0.0, 0.0);
+    }
+
+    return -r * spikyGradFactor / rMag * (h - rMag) * (h - rMag);
+}
+
+double ForceSPH::kernelLaplacianViscosity(double r)
+{
+    if (r <= 0.0 || r > h) {
+        return 0.0;
+    }
+    
+    return viscosiyLaplacianFactor * (1 - r/h);
+}
