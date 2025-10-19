@@ -144,3 +144,74 @@ void ParticleSystem::setPreviousPositions(const Vecd& ppos) {
         particles[i]->prevPos[2] = ppos[3*i + 2];
     }
 }
+
+Vec3i ParticleSystem::intCoord(Vec3 pos) const {
+    return (pos / h).array().floor();
+}
+
+int ParticleSystem::hashPos(Vec3 pos) const
+{
+    Vec3i gridPos = intCoord(pos);
+    return hashCoords(gridPos(0), gridPos(1), gridPos(2));
+}
+
+void ParticleSystem::buildSpatialHashing(double h) {
+    int N = getNumParticles();
+    tableSize = 2 * N;
+    hashTable.assign(tableSize + 1, 0); // Guard
+    particleIndices.assign(N, 0);
+
+    for (int i = 0; i < N; ++i) {
+        Particle* p = particles[i];
+        int hash = hashPos(p->pos);
+        hashTable[hash]++; // Increase count
+    }
+
+    // Partial sums
+    for (int i = 1; i < hashTable.size(); ++i) {
+        hashTable[i] = hashTable[i-1] + hashTable[i];
+    }
+
+    // Fill object ids
+    for (int i = 0; i < N; ++i) {
+        Particle* p = particles[i];
+        int hash = hashPos(p->pos);
+        hashTable[hash]--;
+        particleIndices[hashTable[hash]] = i;
+    }
+}
+
+std::vector<int> ParticleSystem::getNeighbors(int pi) const
+{
+    return getNeighbors(particles[pi]);
+}
+
+std::vector<int> ParticleSystem::getNeighbors(Particle *p) const
+{
+    std::vector<int> nb;
+
+    Vec3i gridPos = intCoord(p->pos);
+
+    for (int i = -1; i <= 1; ++i) {
+        for (int j = -1; j <= 1; ++j) {
+            for (int k = -1; k <= 1; ++k) {
+                int hash = hashCoords( gridPos(0) + i, gridPos(1) + j, gridPos(2) + k );
+                
+                // Cell
+                int start = hashTable[hash];
+                int count = hashTable[hash + 1] - start;
+
+                for (int pidx = start; pidx < start + count; ++pidx) {
+                    int pIndex = particleIndices[pidx];
+                    Particle* p2 = particles[pIndex];
+                    if ( (p2->pos - p->pos).squaredNorm() <= h * h ) {
+                        nb.push_back(pIndex);
+                    }
+                }
+
+            }
+        }
+    }
+
+    return std::vector<int>();
+}

@@ -58,12 +58,31 @@ public:
     void setTime(double t);
     const double* getTimePointer() const;
 
+    // Spatial Hashing
+    void buildSpatialHashing(double h);
+    std::vector<int> getNeighbors(int pi) const;
+    std::vector<int> getNeighbors(Particle* p) const;
+
 protected:
     std::vector<Particle*>	particles;
     std::vector<Force*>		forces;
     double time = 0;
+
+    std::vector<int> hashTable;
+    std::vector<int> particleIndices;
+    double h; // grid size
+    int tableSize;
+
+protected:
+    int hashCoords(int xi, int yi, int zi) const;
+    Vec3i intCoord(Vec3 pos) const;
+    int hashPos(Vec3 pos) const;
 };
 
+inline int ParticleSystem::hashCoords(int xi, int yi, int zi) const {
+    int h = (xi * 92837111) ^ (yi * 689287499) ^ (zi * 283923481);
+    return std::abs(h) & tableSize;
+}
 
 inline int ParticleSystem::getStateSize() const {
     return Particle::PhaseDimension * particles.size();
