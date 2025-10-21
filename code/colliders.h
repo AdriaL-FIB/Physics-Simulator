@@ -88,7 +88,10 @@ public:
     Vec3 getMin() const { return bmin; }
     Vec3 getMax() const { return bmax; }
 
-    virtual bool isInside(const Particle* p) const ;
+    void setHollow(bool b) { hollow = b; }
+
+    virtual bool isInside(const Particle* p) const;
+    virtual bool isInside(const Vec3& pos) const;
     virtual bool testCollision(const Particle* p, Collision& colInfo) const;
 
 protected:
@@ -96,12 +99,7 @@ protected:
     Vec3 bmax;
     Vec3 center;
     Vec3 size;
-};
 
-class ColliderAABBHollow : ColliderAABB
-{
-public:
-    virtual bool testCollision(const Particle* p, Collision& colInfo) const;
+    bool hollow = false;
 };
-
 #endif // COLLIDERS_H

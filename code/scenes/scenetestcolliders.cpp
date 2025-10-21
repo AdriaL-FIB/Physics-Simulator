@@ -67,8 +67,12 @@ void SceneTestColliders::updateSimParams()
             collider = new ColliderSphere(widget->getSphereCenter(), widget->getSphereRadius());
             break;
         case 2:
-            collider = new ColliderAABB(widget->getBoxMin(), widget->getBoxMax());
+        {
+            ColliderAABB* c = new ColliderAABB(widget->getBoxMin(), widget->getBoxMax());
+            c->setHollow(widget->isBoxHollow());
+            collider = c;
             break;
+        }
         default:
             collider = nullptr;
             break;

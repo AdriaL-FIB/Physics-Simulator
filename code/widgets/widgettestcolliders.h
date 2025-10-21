@@ -24,6 +24,7 @@ public:
     double getSphereRadius() const;
     Vec3   getBoxMin() const;
     Vec3   getBoxMax() const;
+    bool   isBoxHollow() const;
 
     double getRestitution() const;
     double getFriction() const;

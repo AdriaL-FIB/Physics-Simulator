@@ -38,6 +38,8 @@ WidgetTestColliders::WidgetTestColliders(QWidget *parent) :
     connect(ui->currX, SIGNAL(valueChanged(double)), this, SLOT(changedParameter()));
     connect(ui->currY, SIGNAL(valueChanged(double)), this, SLOT(changedParameter()));
     connect(ui->currZ, SIGNAL(valueChanged(double)), this, SLOT(changedParameter()));
+
+    connect(ui->isBoxHollow, &QCheckBox::toggled, this, &WidgetTestColliders::changedParameter);
 }
 
 WidgetTestColliders::~WidgetTestColliders()
@@ -78,6 +80,11 @@ Vec3 WidgetTestColliders::getBoxMin() const
 Vec3 WidgetTestColliders::getBoxMax() const
 {
     return Vec3(ui->aabb_maxx->value(), ui->aabb_maxy->value(), ui->aabb_maxz->value());
+}
+
+bool WidgetTestColliders::isBoxHollow() const
+{
+    return ui->isBoxHollow->isChecked();
 }
 
 double WidgetTestColliders::getRestitution() const
