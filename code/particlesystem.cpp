@@ -1,4 +1,5 @@
 #include "particlesystem.h"
+#include <iostream>
 
 Vecd ParticleSystem::getState() const {
     Vecd state(this->getStateSize());
@@ -146,7 +147,7 @@ void ParticleSystem::setPreviousPositions(const Vecd& ppos) {
 }
 
 Vec3i ParticleSystem::intCoord(Vec3 pos) const {
-    return (pos / h).array().floor();
+    return (pos / h).array().floor().cast<int>();
 }
 
 int ParticleSystem::hashPos(Vec3 pos) const
@@ -204,6 +205,11 @@ std::vector<int> ParticleSystem::getNeighbors(Particle *p) const
                 for (int pidx = start; pidx < start + count; ++pidx) {
                     int pIndex = particleIndices[pidx];
                     Particle* p2 = particles[pIndex];
+
+                    if (p->id == p2->id) {
+                        std::cout << "Neighbors include itself" << std::endl;
+                    }
+
                     if ( (p2->pos - p->pos).squaredNorm() <= h * h ) {
                         nb.push_back(pIndex);
                     }

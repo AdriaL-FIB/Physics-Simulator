@@ -127,27 +127,49 @@ protected:
 
 // Boids algorithm
 
-#endif // FORCES_H
+class ParticleSystem;
 
 class ForceSPH : Force
 {
 public:
-    ForceSPH() { h = 0; }
-    ForceSPH(double h) {
-        this->h = h;
-        poly6Factor = 315.0 / (64.0 * M_PI * std::pow(h, 9));
-        spikyGradFactor = 45.0 / (M_PI * std::pow(h, 6));
-        viscosiyLaplacianFactor = 45.0 / (M_PI * std::pow(h, 5));
+    ForceSPH(ParticleSystem* system) {
+        this->system = system;
+        h = 0;
+    }
+    ForceSPH(ParticleSystem* system, double h) {
+        this->system = system;
+        setH(h);
     }
 
     virtual void apply();
-    
+
+    void setH(double h);
+
+protected:
     double kernelPoly6(double rSqr);
     Vec3 kernelGradientSpiky(Vec3 r);
     double kernelLaplacianViscosity(double rSqr);
+
+    double computePressure(double density);
+
 protected:
+    ParticleSystem* system;
     double h;
     double poly6Factor;
     double spikyGradFactor;
     double viscosiyLaplacianFactor;
+
+    std::vector<double> densities, pressures;
+
+    const double p0 = 1.0;
+    const double mu = 1.0;
 };
+
+inline void ForceSPH::setH(double h) {
+    this->h = h;
+    this->poly6Factor = 315.0 / (64.0 * M_PI * std::pow(h, 9));
+    this->spikyGradFactor = 45.0 / (M_PI * std::pow(h, 6));
+    this->viscosiyLaplacianFactor = 45.0 / (M_PI * std::pow(h, 5));
+}
+
+#endif // FORCES_H

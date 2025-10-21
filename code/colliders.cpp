@@ -124,3 +124,36 @@ bool ColliderAABB::testCollision(const Particle* p, Collision& colInfo) const
 
     return true;
 }
+
+bool ColliderAABBHollow::testCollision(const Particle* p, Collision& colInfo) const
+{
+
+    if (isInside(p)) {
+        Vec3 shrunkenBmin = this->bmin + Vec3(p->radius, p->radius, p->radius);
+        Vec3 shrunkenBmax = this->bmax - Vec3(p->radius, p->radius, p->radius);
+
+        Vec3 v = p->pos - p->prevPos;
+
+        Vec3 lmin = (shrunkenBmin - p->prevPos).cwiseQuotient(v);
+        Vec3 lmax = (shrunkenBmax - p->prevPos).cwiseQuotient(v);
+
+        Vec3 l_near = lmin.cwiseMin(lmax);
+        Vec3 l_far  = lmin.cwiseMax(lmax);
+
+        Eigen::Index hitAxis;
+
+        double l_in = l_near.maxCoeff(&hitAxis);
+        bool collision = (l_in <= l_far.minCoeff()) && 0 <= l_in && l_in <= 1;
+
+        if (not collision) return false;
+
+        colInfo.position = p->prevPos + l_in * v;
+        colInfo.normal = Vec3::Zero();
+        colInfo.normal[hitAxis] = v[hitAxis] > 0 ? -1 : 1;
+
+        return true;
+    }
+    else {
+        return ColliderAABB::testCollision(p, colInfo);
+    }
+}

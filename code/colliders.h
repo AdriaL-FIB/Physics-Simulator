@@ -98,5 +98,10 @@ protected:
     Vec3 size;
 };
 
+class ColliderAABBHollow : ColliderAABB
+{
+public:
+    virtual bool testCollision(const Particle* p, Collision& colInfo) const;
+};
 
 #endif // COLLIDERS_H

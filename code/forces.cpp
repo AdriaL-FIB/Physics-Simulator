@@ -1,5 +1,6 @@
 #include "forces.h"
 #include "math.h"
+#include "particlesystem.h"
 
 void ForceConstAcceleration::apply() {
     for (Particle* p : particles) {
@@ -49,6 +50,59 @@ void ForceGravitation::apply() {
 
 void ForceSPH::apply()
 {
+    system->buildSpatialHashing(h);
+
+    int N = particles.size();
+
+    densities.resize(N);
+    pressures.resize(N);
+
+    // Compute density
+    for(int i = 0; i < N; ++i) {
+        Particle* p = particles[i];
+        double density = p->mass * kernelPoly6(0);
+
+        std::vector<int> nbs = system->getNeighbors(p);
+        for (int j = 0; j < nbs.size(); ++j) {
+            Particle* pj = particles[nbs[j]];
+            density += pj->mass * kernelPoly6((pj->pos - p->pos).squaredNorm());
+        }
+        densities[i] = density;
+    }
+
+    // Compute pressure
+    for(int i = 0; i < N; ++i) {
+        Particle* p = particles[i];
+        pressures[i] = computePressure(densities[i]);
+    }
+
+    for(int i = 0; i < N; ++i) {
+        Particle* p = particles[i];
+
+        Vec3 aPressure(0,0,0);
+        Vec3 aViscosity(0,0,0);
+
+        // TODO: optimize
+        std::vector<int> nbs = system->getNeighbors(p);
+        for (int j = 0; j < nbs.size(); ++j) {
+            Particle* pj = particles[nbs[j]];
+
+            Vec3 r = pj->pos - p->pos;
+
+            double rho1 = densities[i];
+            double rho2 = densities[j];
+            
+            double Pij = -pj->mass*(pressures[i]/(rho1*rho1) + pressures[j]/(rho2*rho2));
+
+            aPressure += Pij * kernelGradientSpiky(r);
+
+            Vec3 Vij = mu * pj->mass * (pj->vel - p->vel)/(rho1*rho2);
+
+            aViscosity += Vij * kernelLaplacianViscosity(r.norm());
+        }
+
+        p->force += aPressure + aViscosity;
+    }
 }
 
 double ForceSPH::kernelPoly6(double rSqr) // TODO: If I already have |r|, use r instead of sqr.
@@ -78,4 +132,9 @@ double ForceSPH::kernelLaplacianViscosity(double r)
     }
     
     return viscosiyLaplacianFactor * (1 - r/h);
+}
+
+double ForceSPH::computePressure(double density)
+{
+    return 0.0;
 }
