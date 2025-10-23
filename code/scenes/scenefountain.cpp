@@ -59,8 +59,8 @@ void SceneFountain::initialize() {
     colliderSphere.setRadius(20);
     colliderBox.setFromBounds(Vec3(30,0,20), Vec3(50,10,60));
 
-    //colliders.push_back(&colliderFloor);
-    //colliders.push_back(&colliderRamp);
+    colliders.push_back(&colliderFloor);
+    colliders.push_back(&colliderRamp);
     colliders.push_back(&colliderSphere);
     colliders.push_back(&colliderBox);
 }

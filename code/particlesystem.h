@@ -81,7 +81,7 @@ protected:
 
 inline int ParticleSystem::hashCoords(int xi, int yi, int zi) const {
     int h = (xi * 92837111) ^ (yi * 689287499) ^ (zi * 283923481);
-    return std::abs(h) & tableSize;
+    return std::abs(h) % tableSize;
 }
 
 inline int ParticleSystem::getStateSize() const {

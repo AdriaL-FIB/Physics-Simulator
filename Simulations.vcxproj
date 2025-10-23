@@ -215,6 +215,7 @@
     <ClCompile Include="code\particlesystem.cpp" />
     <ClCompile Include="code\scene.cpp" />
     <ClCompile Include="code\scenes\scenecloth.cpp" />
+    <ClCompile Include="code\scenes\scenefluidsim.cpp" />
     <ClCompile Include="code\scenes\scenefountain.cpp" />
     <ClCompile Include="code\scenes\scenenbody.cpp" />
     <ClCompile Include="code\scenes\sceneprojectiles.cpp" />
@@ -235,6 +236,7 @@
     <ClInclude Include="code\defines.h" />
     <ClInclude Include="code\forces.h" />
     <ClInclude Include="code\glutils.h" />
+    <QtMoc Include="code\scenes\scenefluidsim.h" />
     <QtMoc Include="code\widgets\widgetnbody.h" />
     <QtMoc Include="code\scenes\scenenbody.h" />
     <QtMoc Include="code\glwidget.h" />

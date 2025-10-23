@@ -157,6 +157,7 @@ int ParticleSystem::hashPos(Vec3 pos) const
 }
 
 void ParticleSystem::buildSpatialHashing(double h) {
+    this->h = h;
     int N = getNumParticles();
     tableSize = 2 * N;
     hashTable.assign(tableSize + 1, 0); // Guard
@@ -193,11 +194,16 @@ std::vector<int> ParticleSystem::getNeighbors(Particle *p) const
 
     Vec3i gridPos = intCoord(p->pos);
 
+    std::vector<bool> visited(tableSize, false);
+
     for (int i = -1; i <= 1; ++i) {
         for (int j = -1; j <= 1; ++j) {
             for (int k = -1; k <= 1; ++k) {
                 int hash = hashCoords( gridPos(0) + i, gridPos(1) + j, gridPos(2) + k );
                 
+                if (visited[hash]) continue;
+
+                visited[hash] = true;
                 // Cell
                 int start = hashTable[hash];
                 int count = hashTable[hash + 1] - start;
@@ -206,11 +212,7 @@ std::vector<int> ParticleSystem::getNeighbors(Particle *p) const
                     int pIndex = particleIndices[pidx];
                     Particle* p2 = particles[pIndex];
 
-                    if (p->id == p2->id) {
-                        std::cout << "Neighbors include itself" << std::endl;
-                    }
-
-                    if ( (p2->pos - p->pos).squaredNorm() <= h * h ) {
+                    if (p != p2 and (p2->pos - p->pos).squaredNorm() <= h * h ) {
                         nb.push_back(pIndex);
                     }
                 }
@@ -219,5 +221,5 @@ std::vector<int> ParticleSystem::getNeighbors(Particle *p) const
         }
     }
 
-    return std::vector<int>();
+    return nb;
 }

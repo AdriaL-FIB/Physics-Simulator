@@ -7,6 +7,7 @@
 #include "scenenbody.h"
 #include "scenetestintegrators.h"
 #include "scenetestcolliders.h"
+#include "scenefluidsim.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -26,11 +27,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionCameraY, SIGNAL(triggered()), ui->openGLWidget, SLOT(cameraViewY()));
     connect(ui->actionCameraZ, SIGNAL(triggered()), ui->openGLWidget, SLOT(cameraViewZ()));
 
-    connect(ui->actionSceneProjectiles,&QAction::triggered, this, [=](void){ changeScene(new SceneProjectiles()); });
-    connect(ui->actionSceneFountain,   &QAction::triggered, this, [=](void){ changeScene(new SceneFountain()); });
-    connect(ui->actionSceneRope,       &QAction::triggered, this, [=](void){ changeScene(new SceneRope()); });
-    connect(ui->actionSceneCloth,      &QAction::triggered, this, [=](void){ changeScene(new SceneCloth()); });
-    connect(ui->actionSceneN_Body,     &QAction::triggered, this, [=](void){ changeScene(new SceneNBody()); });
+    connect(ui->actionSceneProjectiles,     &QAction::triggered, this, [=](void){ changeScene(new SceneProjectiles()); });
+    connect(ui->actionSceneFluidSim,        &QAction::triggered, this, [=](void){ changeScene(new SceneFluidSim()); });
+    connect(ui->actionSceneFountain,        &QAction::triggered, this, [=](void){ changeScene(new SceneFountain()); });
+    connect(ui->actionSceneRope,            &QAction::triggered, this, [=](void){ changeScene(new SceneRope()); });
+    connect(ui->actionSceneCloth,           &QAction::triggered, this, [=](void){ changeScene(new SceneCloth()); });
+    connect(ui->actionSceneN_Body,          &QAction::triggered, this, [=](void){ changeScene(new SceneNBody()); });
     connect(ui->actionSceneTestIntegrators, &QAction::triggered, this, [=](void){ changeScene(new SceneTestIntegrators()); });
     connect(ui->actionSceneTestColliders,   &QAction::triggered, this, [=](void){ changeScene(new SceneTestColliders()); });
 }

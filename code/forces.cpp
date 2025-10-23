@@ -125,7 +125,7 @@ Vec3 ForceSPH::kernelGradientSpiky(Vec3 r)
     return -r * spikyGradFactor / rMag * (h - rMag) * (h - rMag);
 }
 
-double ForceSPH::kernelLaplacianViscosity(double r)
+double ForceSPH::kernelLaplacianViscosity(double r) const
 {
     if (r <= 0.0 || r > h) {
         return 0.0;
@@ -136,5 +136,5 @@ double ForceSPH::kernelLaplacianViscosity(double r)
 
 double ForceSPH::computePressure(double density)
 {
-    return 0.0;
+    return 100*(density - 1);
 }

@@ -7,6 +7,7 @@
 SceneFluidSim::SceneFluidSim() {
     widget = new WidgetFountain();
     connect(widget, SIGNAL(updatedParameters()), this, SLOT(updateSimParams()));
+    particleRadius = 1.0;
 }
 
 
@@ -51,6 +52,9 @@ void SceneFluidSim::initialize() {
     fGravity = new ForceConstAcceleration();
     system.addForce(fGravity);
 
+    fSPH = new ForceSPH(&system, 3.0 * particleRadius);
+    system.addForce(fSPH);
+
     // scene description
     fountainPos = Vec3(0, 80, 0);    
     colliderFloor.setPlane(Vec3(0, 1, 0), 0);    
@@ -59,10 +63,14 @@ void SceneFluidSim::initialize() {
     colliderSphere.setRadius(20);
     colliderBox.setFromBounds(Vec3(30,0,20), Vec3(50,10,60));
 
+    colliderBounds.setFromBounds(Vec3(-50, 0, -50), Vec3(50, 100, 50));
+    colliderBounds.setHollow(true);
+
     //colliders.push_back(&colliderFloor);
     //colliders.push_back(&colliderRamp);
-    colliders.push_back(&colliderSphere);
-    colliders.push_back(&colliderBox);
+    //colliders.push_back(&colliderSphere);
+    //colliders.push_back(&colliderBox);
+    colliders.push_back(&colliderBounds);
 }
 
 
@@ -76,6 +84,7 @@ void SceneFluidSim::reset()
 
     // erase all particles
     fGravity->clearInfluencedParticles();
+    fSPH->clearInfluencedParticles();
     system.deleteParticles();
     deadParticles.clear();
 }
@@ -90,8 +99,10 @@ void SceneFluidSim::updateSimParams()
     // get other relevant UI values and update simulation params
     kBounce = 0.5;
     kFriction = 0.1;
-    maxParticleLife = 10.0;
-    emitRate = 100;
+    maxParticleLife = 40.0;
+    emitRate = 10;
+    particleRadius = 1.0;
+    particleMass = 1.0;
 }
 
 
@@ -205,11 +216,13 @@ void SceneFluidSim::update(double dt) {
 
             // don't forget to add particle to forces that affect it
             fGravity->addInfluencedParticle(p);
+            fSPH->addInfluencedParticle(p);
         }
 
         p->color = Vec3(153/255.0, 217/255.0, 234/255.0);
-        p->radius = 1.0;
+        p->radius = particleRadius;
         p->life = maxParticleLife;
+        p->mass = particleMass;
 
         double x = Random::get(-20.0, 20.0);
         double y = 0;

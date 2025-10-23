@@ -1,5 +1,5 @@
-#ifndef SCENEFOUNTAIN_H
-#define SCENEFOUNTAIN_H
+#ifndef SCENEFLUIDSIM_H
+#define SCENEFLUIDSIM_H
 
 #include <QOpenGLShaderProgram>
 #include <QOpenGLVertexArrayObject>
@@ -51,16 +51,21 @@ protected:
     ParticleSystem system;
     std::list<Particle*> deadParticles;
     ForceConstAcceleration* fGravity;
+    ForceSPH* fSPH;
 
     ColliderPlane colliderFloor, colliderRamp;
     ColliderSphere colliderSphere;
     ColliderAABB   colliderBox;
+
+    ColliderAABB colliderBounds;
 
     std::vector<Collider*> colliders;
 
     double kBounce, kFriction;
     double emitRate;
     double maxParticleLife;
+    double particleRadius;
+    double particleMass;
 
     Vec3 fountainPos;
     int mouseX, mouseY;

@@ -122,6 +122,9 @@
     <ClCompile Include="code\widgets\widgetnbody.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="code\scenes\scenefluidsim.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="code\camera.h">
@@ -271,6 +274,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="code\widgets\widgetnbody.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="code\scenes\scenefluidsim.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

@@ -129,7 +129,7 @@ protected:
 
 class ParticleSystem;
 
-class ForceSPH : Force
+class ForceSPH : public Force
 {
 public:
     ForceSPH(ParticleSystem* system) {
@@ -148,16 +148,16 @@ public:
 protected:
     double kernelPoly6(double rSqr);
     Vec3 kernelGradientSpiky(Vec3 r);
-    double kernelLaplacianViscosity(double rSqr);
+    double kernelLaplacianViscosity(double rSqr) const;
 
     double computePressure(double density);
 
 protected:
     ParticleSystem* system;
-    double h;
-    double poly6Factor;
-    double spikyGradFactor;
-    double viscosiyLaplacianFactor;
+    double h = 0;
+    double poly6Factor = 0;
+    double spikyGradFactor = 0;
+    double viscosiyLaplacianFactor = 0;
 
     std::vector<double> densities, pressures;
 
