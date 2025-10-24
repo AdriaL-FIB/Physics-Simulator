@@ -103,6 +103,7 @@ void SceneFluidSim::updateSimParams()
     emitRate = 100;
     particleRadius = 1.0;
     particleMass = 1.0;
+    emitParticles = true;
 }
 
 
@@ -201,34 +202,36 @@ void SceneFluidSim::paint(const Camera& camera) {
 void SceneFluidSim::update(double dt) {
 
     // emit new particles, reuse dead ones if possible
-    int emitParticles = std::max(1, int(std::round(emitRate * dt)));
-    for (int i = 0; i < emitParticles; i++) {
-        Particle* p;
-        if (!deadParticles.empty()) {
-            // reuse one dead particle
-            p = deadParticles.front();
-            deadParticles.pop_front();
+    if (emitParticles) {
+        int emitParticles = std::max(1, int(std::round(emitRate * dt)));
+        for (int i = 0; i < emitParticles; i++) {
+            Particle* p;
+            if (!deadParticles.empty()) {
+                // reuse one dead particle
+                p = deadParticles.front();
+                deadParticles.pop_front();
+            }
+            else {
+                // create new particle
+                p = new Particle();
+                system.addParticle(p);
+    
+                // don't forget to add particle to forces that affect it
+                fGravity->addInfluencedParticle(p);
+                fSPH->addInfluencedParticle(p);
+            }
+    
+            p->color = Vec3(153/255.0, 217/255.0, 234/255.0);
+            p->radius = particleRadius;
+            p->life = maxParticleLife;
+            p->mass = particleMass;
+    
+            double x = Random::get(-20.0, 20.0);
+            double y = 0;
+            double z = Random::get(-20.0, 20.0);
+            p->pos = Vec3(x, y, z) + fountainPos;
+            p->vel = Vec3(0,0,0);
         }
-        else {
-            // create new particle
-            p = new Particle();
-            system.addParticle(p);
-
-            // don't forget to add particle to forces that affect it
-            fGravity->addInfluencedParticle(p);
-            fSPH->addInfluencedParticle(p);
-        }
-
-        p->color = Vec3(153/255.0, 217/255.0, 234/255.0);
-        p->radius = particleRadius;
-        p->life = maxParticleLife;
-        p->mass = particleMass;
-
-        double x = Random::get(-20.0, 20.0);
-        double y = 0;
-        double z = Random::get(-20.0, 20.0);
-        p->pos = Vec3(x, y, z) + fountainPos;
-        p->vel = Vec3(0,0,0);
     }
 
     // integration step

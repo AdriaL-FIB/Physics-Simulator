@@ -162,7 +162,7 @@ protected:
     std::vector<double> densities, pressures;
 
     const double p0 = 1.0;
-    const double mu = 1.0;
+    const double mu = 0.1;
 };
 
 inline void ForceSPH::setH(double h) {

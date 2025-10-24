@@ -66,6 +66,8 @@ protected:
     double maxParticleLife;
     double particleRadius;
     double particleMass;
+    bool emitParticles;
+
 
     Vec3 fountainPos;
     int mouseX, mouseY;

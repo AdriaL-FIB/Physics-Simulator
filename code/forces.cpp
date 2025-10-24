@@ -86,14 +86,15 @@ void ForceSPH::apply()
         // TODO: optimize
         std::vector<int> nbs = system->getNeighbors(p);
         for (int j = 0; j < nbs.size(); ++j) {
-            Particle* pj = particles[nbs[j]];
+            int neighborIndx = nbs[j];
+            Particle* pj = particles[neighborIndx];
 
             Vec3 r = pj->pos - p->pos;
 
             double rho1 = densities[i];
-            double rho2 = densities[j];
+            double rho2 = densities[neighborIndx];
             
-            double Pij = -pj->mass*(pressures[i]/(rho1*rho1) + pressures[j]/(rho2*rho2));
+            double Pij = -pj->mass*(pressures[i]/(rho1*rho1) + pressures[neighborIndx]/(rho2*rho2));
 
             aPressure += Pij * kernelGradientSpiky(r);
 
@@ -116,41 +117,41 @@ void ForceSPH::apply()
     }
 
     // Print densities and pressure stats (min, max, avg, quaredAverage)
-    if (N > 0) {
-        double minDensity = densities[0];
-        double maxDensity = densities[0];
-        double avgDensity = 0.0;
-        double sqAvgDensity = 0.0;
+    // if (N > 0) {
+    //     double minDensity = densities[0];
+    //     double maxDensity = densities[0];
+    //     double avgDensity = 0.0;
+    //     double sqAvgDensity = 0.0;
         
-        double minPressure = pressures[0];
-        double maxPressure = pressures[0];
-        double avgPressure = 0.0;
-        double sqAvgPressure = 0.0;
+    //     double minPressure = pressures[0];
+    //     double maxPressure = pressures[0];
+    //     double avgPressure = 0.0;
+    //     double sqAvgPressure = 0.0;
         
-        for (int i = 0; i < N; ++i) {
-            // Density stats
-            minDensity = std::min(minDensity, densities[i]);
-            maxDensity = std::max(maxDensity, densities[i]);
-            avgDensity += densities[i];
-            sqAvgDensity += densities[i] * densities[i];
+    //     for (int i = 0; i < N; ++i) {
+    //         // Density stats
+    //         minDensity = std::min(minDensity, densities[i]);
+    //         maxDensity = std::max(maxDensity, densities[i]);
+    //         avgDensity += densities[i];
+    //         sqAvgDensity += densities[i] * densities[i];
             
-            // Pressure stats
-            minPressure = std::min(minPressure, pressures[i]);
-            maxPressure = std::max(maxPressure, pressures[i]);
-            avgPressure += pressures[i];
-            sqAvgPressure += pressures[i] * pressures[i];
-        }
+    //         // Pressure stats
+    //         minPressure = std::min(minPressure, pressures[i]);
+    //         maxPressure = std::max(maxPressure, pressures[i]);
+    //         avgPressure += pressures[i];
+    //         sqAvgPressure += pressures[i] * pressures[i];
+    //     }
         
-        avgDensity /= N;
-        sqAvgDensity = std::sqrt(sqAvgDensity / N);
-        avgPressure /= N;
-        sqAvgPressure = std::sqrt(sqAvgPressure / N);
+    //     avgDensity /= N;
+    //     sqAvgDensity = std::sqrt(sqAvgDensity / N);
+    //     avgPressure /= N;
+    //     sqAvgPressure = std::sqrt(sqAvgPressure / N);
         
-        std::cout << "Density  - Min: " << minDensity << ", Max: " << maxDensity 
-                  << ", Avg: " << avgDensity << ", RMS: " << sqAvgDensity << std::endl;
-        std::cout << "Pressure - Min: " << minPressure << ", Max: " << maxPressure 
-                  << ", Avg: " << avgPressure << ", RMS: " << sqAvgPressure << std::endl;
-    }
+    //     std::cout << "Density  - Min: " << minDensity << ", Max: " << maxDensity 
+    //               << ", Avg: " << avgDensity << ", RMS: " << sqAvgDensity << std::endl;
+    //     std::cout << "Pressure - Min: " << minPressure << ", Max: " << maxPressure 
+    //               << ", Avg: " << avgPressure << ", RMS: " << sqAvgPressure << std::endl;
+    // }
 }
 
 double ForceSPH::kernelPoly6(double rSqr) // TODO: If I already have |r|, use r instead of sqr.
