@@ -66,10 +66,10 @@ void SceneFluidSim::initialize() {
     colliderBounds.setFromBounds(Vec3(-50, 0, -50), Vec3(50, 100, 50));
     colliderBounds.setHollow(true);
 
-    //colliders.push_back(&colliderFloor);
-    //colliders.push_back(&colliderRamp);
-    //colliders.push_back(&colliderSphere);
-    //colliders.push_back(&colliderBox);
+    colliders.push_back(&colliderFloor);
+    colliders.push_back(&colliderRamp);
+    colliders.push_back(&colliderSphere);
+    colliders.push_back(&colliderBox);
     colliders.push_back(&colliderBounds);
 }
 
@@ -99,8 +99,8 @@ void SceneFluidSim::updateSimParams()
     // get other relevant UI values and update simulation params
     kBounce = 0.5;
     kFriction = 0.1;
-    maxParticleLife = 40.0;
-    emitRate = 10;
+    maxParticleLife = 400.0;
+    emitRate = 100;
     particleRadius = 1.0;
     particleMass = 1.0;
 }

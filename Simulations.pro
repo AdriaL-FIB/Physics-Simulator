@@ -30,6 +30,7 @@ SOURCES += \
     code/scenes/scenetestcolliders.cpp \
     code/scenes/scenetestintegrators.cpp \
     code/scenes/scenenbody.cpp \
+    code/scenes/scenefluidsim.cpp \
     code/widgets/widgetcloth.cpp \
     code/widgets/widgetfountain.cpp \
     code/widgets/widgetprojectiles.cpp \
@@ -58,6 +59,7 @@ HEADERS += \
     code/scenes/scenetestcolliders.h \
     code/scenes/scenetestintegrators.h \
     code/scenes/scenenbody.h \
+    code/scenes/scenefluidsim.h \
     code/widgets/widgetcloth.h \
     code/widgets/widgetfountain.h \
     code/widgets/widgetprojectiles.h \

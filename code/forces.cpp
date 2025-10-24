@@ -1,6 +1,7 @@
 #include "forces.h"
 #include "math.h"
 #include "particlesystem.h"
+#include <iostream>
 
 void ForceConstAcceleration::apply() {
     for (Particle* p : particles) {
@@ -101,7 +102,54 @@ void ForceSPH::apply()
             aViscosity += Vij * kernelLaplacianViscosity(r.norm());
         }
 
-        p->force += aPressure + aViscosity;
+        p->force += (aPressure + aViscosity);
+
+        // double pressureNorm = std::clamp(pressures[i] / 100.0, 0.0, 100.0);
+        // pressureNorm = (pressureNorm + 1.0) * 0.5; // map from [-1,1] to [0,1]
+        
+        // // Soft colors: light blue (0.5, 0.7, 1.0) -> light red (1.0, 0.5, 0.5)
+        // p->color = Vec3(
+        //     0.5 + 0.5 * pressureNorm,      // R: 0.5 -> 1.0
+        //     0.7 - 0.2 * pressureNorm,      // G: 0.7 -> 0.5
+        //     1.0 - 0.5 * pressureNorm       // B: 1.0 -> 0.5
+        // );
+    }
+
+    // Print densities and pressure stats (min, max, avg, quaredAverage)
+    if (N > 0) {
+        double minDensity = densities[0];
+        double maxDensity = densities[0];
+        double avgDensity = 0.0;
+        double sqAvgDensity = 0.0;
+        
+        double minPressure = pressures[0];
+        double maxPressure = pressures[0];
+        double avgPressure = 0.0;
+        double sqAvgPressure = 0.0;
+        
+        for (int i = 0; i < N; ++i) {
+            // Density stats
+            minDensity = std::min(minDensity, densities[i]);
+            maxDensity = std::max(maxDensity, densities[i]);
+            avgDensity += densities[i];
+            sqAvgDensity += densities[i] * densities[i];
+            
+            // Pressure stats
+            minPressure = std::min(minPressure, pressures[i]);
+            maxPressure = std::max(maxPressure, pressures[i]);
+            avgPressure += pressures[i];
+            sqAvgPressure += pressures[i] * pressures[i];
+        }
+        
+        avgDensity /= N;
+        sqAvgDensity = std::sqrt(sqAvgDensity / N);
+        avgPressure /= N;
+        sqAvgPressure = std::sqrt(sqAvgPressure / N);
+        
+        std::cout << "Density  - Min: " << minDensity << ", Max: " << maxDensity 
+                  << ", Avg: " << avgDensity << ", RMS: " << sqAvgDensity << std::endl;
+        std::cout << "Pressure - Min: " << minPressure << ", Max: " << maxPressure 
+                  << ", Avg: " << avgPressure << ", RMS: " << sqAvgPressure << std::endl;
     }
 }
 
@@ -136,5 +184,5 @@ double ForceSPH::kernelLaplacianViscosity(double r) const
 
 double ForceSPH::computePressure(double density)
 {
-    return 100*(density - 1);
+    return 200*(density - 0.1);
 }
