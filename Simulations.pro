@@ -32,6 +32,7 @@ SOURCES += \
     code/scenes/scenenbody.cpp \
     code/scenes/scenefluidsim.cpp \
     code/widgets/widgetcloth.cpp \
+    code/widgets/widgetfluidsim.cpp \
     code/widgets/widgetfountain.cpp \
     code/widgets/widgetprojectiles.cpp \
     code/widgets/widgetrope.cpp \
@@ -62,6 +63,7 @@ HEADERS += \
     code/scenes/scenefluidsim.h \
     code/widgets/widgetcloth.h \
     code/widgets/widgetfountain.h \
+    code/widgets/widgetfluidsim.h \
     code/widgets/widgetprojectiles.h \
     code/widgets/widgetrope.h \
     code/widgets/widgettestcolliders.h \
@@ -72,6 +74,7 @@ FORMS += \
     forms/mainwindow.ui \
     forms/widgetcloth.ui \
     forms/widgetfountain.ui \
+    forms/widgetfluidsim.ui \
     forms/widgetprojectiles.ui \
     forms/widgetrope.ui \
     forms/widgettestcolliders.ui \
