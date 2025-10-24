@@ -5,7 +5,7 @@
 #include <QOpenGLVertexArrayObject>
 #include <list>
 #include "scene.h"
-#include "widgetfountain.h"
+#include "widgetfluidsim.h"
 #include "particlesystem.h"
 #include "integrators.h"
 #include "colliders.h"
@@ -38,7 +38,7 @@ public slots:
     void updateSimParams();
 
 protected:
-    WidgetFountain* widget = nullptr;
+    WidgetFluidSim* widget = nullptr;
 
     QOpenGLShaderProgram* shader = nullptr;
     QOpenGLVertexArrayObject* vaoSphereL = nullptr;
@@ -47,7 +47,7 @@ protected:
     QOpenGLVertexArrayObject* vaoFloor   = nullptr;
     unsigned int numFacesSphereL = 0, numFacesSphereH = 0;
 
-    IntegratorEuler integrator;
+    Integrator* integrator = nullptr;
     ParticleSystem system;
     std::list<Particle*> deadParticles;
     ForceConstAcceleration* fGravity;

@@ -145,6 +145,9 @@ public:
 
     void setH(double h);
 
+    void setRestDensity(double p0) { this->p0 = p0; }
+    void setViscosityConstant(double mu) { this->mu = mu; }
+
 protected:
     double kernelPoly6(double rSqr);
     Vec3 kernelGradientSpiky(Vec3 r);
@@ -161,8 +164,8 @@ protected:
 
     std::vector<double> densities, pressures;
 
-    const double p0 = 1.0;
-    const double mu = 0.1;
+    double p0 = 0.1;
+    double mu = 0.1;
 };
 
 inline void ForceSPH::setH(double h) {

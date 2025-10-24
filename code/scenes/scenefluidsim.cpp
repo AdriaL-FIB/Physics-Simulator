@@ -5,9 +5,10 @@
 
 
 SceneFluidSim::SceneFluidSim() {
-    widget = new WidgetFountain();
+    widget = new WidgetFluidSim();
     connect(widget, SIGNAL(updatedParameters()), this, SLOT(updateSimParams()));
     particleRadius = 1.0;
+    widget->setSolverTypes(getIntegratorNames());
 }
 
 
@@ -92,18 +93,24 @@ void SceneFluidSim::reset()
 
 void SceneFluidSim::updateSimParams()
 {
+    if (integrator) delete integrator;
+    integrator = createIntegrator(widget->getIntegratorType());
+
     // get gravity from UI and update force
     double g = widget->getGravity();
     fGravity->setAcceleration(Vec3(0, -g, 0));
 
     // get other relevant UI values and update simulation params
-    kBounce = 0.5;
-    kFriction = 0.1;
-    maxParticleLife = 400.0;
-    emitRate = 100;
-    particleRadius = 1.0;
-    particleMass = 1.0;
-    emitParticles = true;
+    kBounce = widget->getKBounce();
+    kFriction = widget->getKFriction();
+    maxParticleLife = widget->getMaxParticleLife();
+    emitRate = widget->getEmissionRate();
+    particleRadius = widget->getParticleRadius();
+    particleMass = widget->getParticleMass();
+    emitParticles = widget->emitParticles();
+
+    fSPH->setRestDensity(widget->getRestDensity());
+    fSPH->setViscosityConstant(widget->getViscosityConstant());
 }
 
 
@@ -236,7 +243,7 @@ void SceneFluidSim::update(double dt) {
 
     // integration step
     Vecd ppos = system.getPositions();
-    integrator.step(system, dt);
+    integrator->step(system, dt);
     system.setPreviousPositions(ppos);
 
     // collisions

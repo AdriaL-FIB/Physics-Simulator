@@ -185,5 +185,5 @@ double ForceSPH::kernelLaplacianViscosity(double r) const
 
 double ForceSPH::computePressure(double density)
 {
-    return 200*(density - 0.1);
+    return 100*100*(density - p0);
 }

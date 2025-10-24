@@ -223,6 +223,7 @@
     <ClCompile Include="code\scenes\scenetestcolliders.cpp" />
     <ClCompile Include="code\scenes\scenetestintegrators.cpp" />
     <ClCompile Include="code\widgets\widgetcloth.cpp" />
+    <ClCompile Include="code\widgets\widgetfluidsim.cpp" />
     <ClCompile Include="code\widgets\widgetfountain.cpp" />
     <ClCompile Include="code\widgets\widgetnbody.cpp" />
     <ClCompile Include="code\widgets\widgetprojectiles.cpp" />
@@ -236,6 +237,7 @@
     <ClInclude Include="code\defines.h" />
     <ClInclude Include="code\forces.h" />
     <ClInclude Include="code\glutils.h" />
+    <QtMoc Include="code\widgets\widgetfluidsim.h" />
     <QtMoc Include="code\scenes\scenefluidsim.h" />
     <QtMoc Include="code\widgets\widgetnbody.h" />
     <QtMoc Include="code\scenes\scenenbody.h" />
@@ -278,6 +280,7 @@
   <ItemGroup>
     <QtUic Include="forms\mainwindow.ui" />
     <QtUic Include="forms\widgetcloth.ui" />
+    <QtUic Include="forms\widgetfluidsim.ui" />
     <QtUic Include="forms\widgetfountain.ui" />
     <QtUic Include="forms\widgetnbody.ui" />
     <QtUic Include="forms\widgetprojectiles.ui" />

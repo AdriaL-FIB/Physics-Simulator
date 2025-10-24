@@ -15,6 +15,15 @@ public:
     ~WidgetFountain();
 
     double getGravity()    const;
+    double getKBounce()    const;
+    double getKFriction()    const;
+    double getEmissionRate()    const;
+    double getMaxParticleLife()    const;
+
+    int    getIntegratorType() const;
+    void setSolverTypes(const std::vector<std::string>& solvers);
+
+
 
 signals:
     void updatedParameters();
