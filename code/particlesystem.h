@@ -2,6 +2,7 @@
 #define PARTICLESYSTEM_H
 
 #include <vector>
+#include <algorithm>
 #include "defines.h"
 #include "particle.h"
 #include "forces.h"
@@ -47,6 +48,9 @@ public:
 
     // forces
     void addForce(Force* f);
+    void removeForce(Force* f);
+    const std::vector<Force*>& getSystemForces() const;
+    std::vector<Force*>& getSystemForces();
     unsigned int getNumForces() const;
     const Force* getForce(unsigned int i) const;
     Force* getForce(unsigned int i);
@@ -158,6 +162,18 @@ inline void ParticleSystem::setTime(double t) {
 
 inline const double* ParticleSystem::getTimePointer() const {
     return &time;
+}
+
+inline void ParticleSystem::removeForce(Force* f) {
+    forces.erase(std::remove(forces.begin(), forces.end(), f), forces.end());
+}
+
+inline std::vector<Force*>& ParticleSystem::getSystemForces() {
+    return forces;
+}
+
+inline const std::vector<Force*>& ParticleSystem::getSystemForces() const {
+    return forces;
 }
 
 

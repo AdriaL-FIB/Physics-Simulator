@@ -100,6 +100,11 @@ void SceneProjectiles::initialize() {
     fGravity2->addInfluencedParticle(systemNumerical2.getParticle(0));
     systemNumerical2.addForce(fGravity2);
 
+    fDrag1 = new ForceDrag();
+    fDrag2 = new ForceDrag();
+    systemNumerical1.addForce(fDrag1);
+    systemNumerical2.addForce(fDrag2);
+
 }
 
 
@@ -142,6 +147,21 @@ void SceneProjectiles::reset() {
     // update gravity accelerations
     fGravity1->setAcceleration(Vec3(0, -gravityAccel, 0));
     fGravity2->setAcceleration(Vec3(0, -gravityAccel, 0));
+
+    // drag
+    kLinear = widget->getKLinear();
+    kQuadratic = widget->getKQuadratic();
+    dragForceEnabled = widget->isDragEnabled();
+
+    fDrag1->setDragCoefficients(kLinear, kQuadratic);
+    fDrag2->setDragCoefficients(kLinear, kQuadratic);
+
+    fDrag1->clearInfluencedParticles();
+    fDrag2->clearInfluencedParticles();
+    if (dragForceEnabled) {
+        fDrag1->addInfluencedParticle(systemNumerical1.getParticle(0));
+        fDrag2->addInfluencedParticle(systemNumerical2.getParticle(0));
+    }
 
     // update system forces
     systemNumerical1.updateForces();

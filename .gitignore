@@ -1,9 +1,12 @@
 .vscode
 .vs
+.github
 .qmake.stash
 Makefile
 Simulations
 *.o
+enc_temp_folder/
+
 
 Simulations.vcxproj.user
 ui_*.h

@@ -48,6 +48,23 @@
      </property>
     </widget>
    </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Initial speed</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QDoubleSpinBox" name="speed">
+     <property name="maximum">
+      <double>50.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>40.000000000000000</double>
+     </property>
+    </widget>
+   </item>
    <item row="3" column="0">
     <widget class="QLabel" name="label_3">
      <property name="text">
@@ -68,38 +85,59 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_4">
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_7">
      <property name="text">
-      <string>Initial speed</string>
+      <string>K Linear</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <widget class="QDoubleSpinBox" name="speed">
+   <item row="4" column="1">
+    <widget class="QDoubleSpinBox" name="kLinear">
+     <property name="minimum">
+      <double>0.000000000000000</double>
+     </property>
      <property name="maximum">
-      <double>50.000000000000000</double>
+      <double>2.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.200000000000000</double>
+     </property>
+     <property name="stepType">
+      <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
      </property>
      <property name="value">
-      <double>40.000000000000000</double>
+      <double>0.100000000000000</double>
      </property>
     </widget>
    </item>
-   <item row="7" column="0" colspan="2">
-    <widget class="QCheckBox" name="sameZ">
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_8">
      <property name="text">
-      <string>Same Z coordinate</string>
+      <string>K Quadratic</string>
      </property>
     </widget>
    </item>
-   <item row="6" column="0" colspan="2">
-    <widget class="QCheckBox" name="trajectory">
-     <property name="text">
-      <string>Show trajectory</string>
+   <item row="5" column="1">
+    <widget class="QDoubleSpinBox" name="kQuadratic">
+     <property name="minimum">
+      <double>0.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.200000000000000</double>
+     </property>
+     <property name="stepType">
+      <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+     </property>
+     <property name="value">
+      <double>0.100000000000000</double>
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
+   <item row="6" column="0">
     <widget class="QLabel" name="label_5">
      <property name="styleSheet">
       <string notr="true">font-weight:bold;color:darkred</string>
@@ -109,17 +147,7 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="label_6">
-     <property name="styleSheet">
-      <string notr="true">font-weight:bold;color:darkblue</string>
-     </property>
-     <property name="text">
-      <string>Solver 2</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1">
+   <item row="6" column="1">
     <widget class="QComboBox" name="solver1">
      <item>
       <property name="text">
@@ -143,8 +171,39 @@
      </item>
     </widget>
    </item>
-   <item row="5" column="1">
+   <item row="7" column="0">
+    <widget class="QLabel" name="label_6">
+     <property name="styleSheet">
+      <string notr="true">font-weight:bold;color:darkblue</string>
+     </property>
+     <property name="text">
+      <string>Solver 2</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
     <widget class="QComboBox" name="solver2"/>
+   </item>
+   <item row="8" column="0" colspan="2">
+    <widget class="QCheckBox" name="trajectory">
+     <property name="text">
+      <string>Show trajectory</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0" colspan="2">
+    <widget class="QCheckBox" name="sameZ">
+     <property name="text">
+      <string>Same Z coordinate</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0" colspan="2">
+    <widget class="QCheckBox" name="dragForce">
+     <property name="text">
+      <string>Enable drag force</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

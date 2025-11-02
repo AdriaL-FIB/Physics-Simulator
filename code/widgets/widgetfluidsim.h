@@ -24,8 +24,10 @@ public:
     bool emitParticles()    const;
     double getRestDensity()    const;
     double getViscosityConstant()    const;
+    bool getEnableWind()    const;
 
     int    getIntegratorType() const;
+    void   setIntegratorType(int i);
     void setSolverTypes(const std::vector<std::string>& solvers);
 
 

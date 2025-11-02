@@ -56,8 +56,16 @@ double WidgetFluidSim::getViscosityConstant() const {
     return ui->mu->value();
 }
 
+bool WidgetFluidSim::getEnableWind() const {
+    return ui->enableWind->isChecked();
+}
+
 int WidgetFluidSim::getIntegratorType() const {
     return ui->integrator->currentIndex();
+}
+
+void WidgetFluidSim::setIntegratorType(int i) {
+    return ui->integrator->setCurrentIndex(i);
 }
 
 void WidgetFluidSim::setSolverTypes(const std::vector<std::string>& solvers) {

@@ -149,9 +149,9 @@ public:
     void setViscosityConstant(double mu) { this->mu = mu; }
 
 protected:
-    double kernelPoly6(double rSqr);
-    Vec3 kernelGradientSpiky(Vec3 r);
-    double kernelLaplacianViscosity(double rSqr) const;
+    double kernelPoly6(double rSqr) const;
+    Vec3 kernelGradientSpiky(Vec3 r) const;
+    double kernelLaplacianViscosity(double r) const;
 
     double computePressure(double density);
 
@@ -160,19 +160,86 @@ protected:
     double h = 0;
     double poly6Factor = 0;
     double spikyGradFactor = 0;
-    double viscosiyLaplacianFactor = 0;
+    double viscosityLaplacianFactor = 0;
 
     std::vector<double> densities, pressures;
 
-    double p0 = 0.1;
-    double mu = 0.1;
+    double p0;
+    double mu;
 };
 
 inline void ForceSPH::setH(double h) {
     this->h = h;
     this->poly6Factor = 315.0 / (64.0 * M_PI * std::pow(h, 9));
     this->spikyGradFactor = 45.0 / (M_PI * std::pow(h, 6));
-    this->viscosiyLaplacianFactor = 45.0 / (M_PI * std::pow(h, 5));
+    this->viscosityLaplacianFactor = 45.0 / (M_PI * std::pow(h, 5));
 }
+
+// Wind force (localized fan/ventilator)
+class ForceWind : public Force
+{
+public:
+    ForceWind();
+    
+    // Create wind with center, cross-section size (width x height), flow direction, length, and strength
+    // center: center of the outlet plane where air comes out
+    // width, height: cross-section dimensions of the air flow (perpendicular to direction)
+    // dir: flow direction (will be snapped to nearest axis)
+    // length: how far the air reaches from the outlet
+    // strength: acceleration magnitude
+    ForceWind(const Vec3& center, double width, double height, const Vec3& dir, double length, double strength);
+    
+    virtual ~ForceWind() {}
+
+    virtual void apply();
+
+    // Set center (the face where air comes out)
+    void setCenter(const Vec3& c) { center = c; updateInternals(); }
+    
+    // Set cross-section dimensions (width x height perpendicular to flow)
+    void setDimensions(double w, double h) { width = w; height = h; updateInternals(); }
+    
+    // Set flow direction (will be snapped to nearest axis: ±X, ±Y, ±Z)
+    void setDirection(const Vec3& d);
+    
+    // Set how far the air reaches
+    void setLength(double l) { length = l; updateInternals(); }
+    
+    void setStrength(double s) { strength = s; }
+    void setFrequency(double f) { frequency = f; }
+    void setTimePointer(const double* tp) { timePtr = tp; }
+
+    Vec3 getCenter() const { return center; }
+    Vec3 getAABBCenter() const { return aabbCenter; }  // AABB center (for rendering)
+    Vec3 getHalfSize() const { return boxHalfSize; }   // AABB half-size (for rendering)
+    Vec3 getDirection() const { return direction; }
+    double getWidth() const { return width; }
+    double getHeight() const { return height; }
+    double getLength() const { return length; }
+    double getStrength() const { return strength; }
+    double getFrequency() const { return frequency; }
+
+protected:
+    // Snap direction to nearest cardinal axis (±X, ±Y, or ±Z)
+    static Vec3 snapToAxis(const Vec3& d);
+    
+    // Update internal AABB representation and cached values
+    void updateInternals();
+
+protected:
+    // User-facing parameters
+    Vec3 center;            // center of the outlet face (where air comes out)
+    double width, height;   // cross-section dimensions perpendicular to flow
+    double length;          // how far the air reaches
+    Vec3 direction;         // flow direction (axis-aligned: ±X, ±Y, or ±Z)
+    double strength;        // acceleration magnitude
+    double frequency;       // pulsation frequency in Hz (0 = steady)
+    const double* timePtr;  // pointer to simulation time
+    
+    // Cached/computed values (for efficiency)
+    Vec3 aabbCenter;        // AABB center (center + direction * length/2)
+    Vec3 boxHalfSize;       // AABB half-extents
+    Vec3 invHalfSize;       // precomputed 1/boxHalfSize (optimization)
+};
 
 #endif // FORCES_H

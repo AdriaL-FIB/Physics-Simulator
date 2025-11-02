@@ -1,6 +1,11 @@
 #ifndef SCENEFLUIDSIM_H
 #define SCENEFLUIDSIM_H
 
+// Wind performance diagnostic: set to 0 to disable all wind code at compile-time
+#ifndef ENABLE_WIND
+#define ENABLE_WIND 1
+#endif
+
 #include <QOpenGLShaderProgram>
 #include <QOpenGLVertexArrayObject>
 #include <list>
@@ -9,6 +14,11 @@
 #include "particlesystem.h"
 #include "integrators.h"
 #include "colliders.h"
+
+// Forward declarations for conditional compilation
+#if ENABLE_WIND
+class ForceWind;
+#endif
 
 class SceneFluidSim : public Scene
 {
@@ -52,6 +62,9 @@ protected:
     std::list<Particle*> deadParticles;
     ForceConstAcceleration* fGravity;
     ForceSPH* fSPH;
+#if ENABLE_WIND
+    ForceWind* fWind;
+#endif
 
     ColliderPlane colliderFloor, colliderRamp;
     ColliderSphere colliderSphere;
@@ -67,10 +80,12 @@ protected:
     double particleRadius;
     double particleMass;
     bool emitParticles;
-
+#if ENABLE_WIND
+    bool windEnabled;  // runtime control to enable/disable wind force
+#endif
 
     Vec3 fountainPos;
     int mouseX, mouseY;
 };
 
-#endif // SCENEFOUNTAIN_H
+#endif // SCENEFLUIDSIM_H

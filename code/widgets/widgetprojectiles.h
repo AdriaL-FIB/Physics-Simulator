@@ -24,6 +24,10 @@ public:
     bool renderSameZ() const;
     bool renderTrajectory() const;
 
+    double getKLinear() const;
+    double getKQuadratic() const;
+    bool isDragEnabled() const;
+
     void setSolverTypes(const std::vector<std::string>& solvers);
     void setSolver1(int idx);
     void setSolver2(int idx);

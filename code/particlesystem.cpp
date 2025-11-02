@@ -1,6 +1,9 @@
 #include "particlesystem.h"
 #include <iostream>
 
+// Define this to use brute force neighbor search instead of spatial hashing
+//#define USE_BRUTEFORCE_NEIGHBORS
+
 Vecd ParticleSystem::getState() const {
     Vecd state(this->getStateSize());
     for (unsigned int i = 0; i < particles.size(); i++) {
@@ -192,6 +195,17 @@ std::vector<int> ParticleSystem::getNeighbors(Particle *p) const
 {
     std::vector<int> nb;
 
+#ifdef USE_BRUTEFORCE_NEIGHBORS
+    // Brute force: check all particles
+    for (int i = 0; i < particles.size(); ++i) {
+        Particle* p2 = particles[i];
+        if (p != p2 && (p2->pos - p->pos).squaredNorm() <= h * h) {
+            nb.push_back(i);
+        }
+    }
+#else
+    // Spatial hashing: only check nearby cells
+    // Not generic. Assumes max distance is h (size of the cell)
     Vec3i gridPos = intCoord(p->pos);
 
     std::vector<bool> visited(tableSize, false);
@@ -220,6 +234,7 @@ std::vector<int> ParticleSystem::getNeighbors(Particle *p) const
             }
         }
     }
+#endif
 
     return nb;
 }

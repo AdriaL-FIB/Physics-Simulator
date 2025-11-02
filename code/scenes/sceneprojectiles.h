@@ -64,6 +64,11 @@ protected:
     double gravityAccel;
     double shotHeight, shotAngle, shotSpeed;
 
+    bool dragForceEnabled;
+    double kLinear, kQuadratic;
+    ForceDrag* fDrag1 = nullptr;
+    ForceDrag* fDrag2 = nullptr;
+
     ColliderPlane colliderPlane;
 };
 #endif // SCENEPROJECTILES_H

@@ -45,6 +45,21 @@ bool WidgetProjectiles::renderTrajectory() const {
     return ui->trajectory->isChecked();
 }
 
+double WidgetProjectiles::getKLinear() const
+{
+    return ui->kLinear->value();
+}
+
+double WidgetProjectiles::getKQuadratic() const
+{
+    return ui->kQuadratic->value();
+}
+
+bool WidgetProjectiles::isDragEnabled() const
+{
+    return ui->dragForce->isChecked();
+}
+
 void WidgetProjectiles::setSolverTypes(const std::vector<std::string>& solvers) {
     ui->solver1->clear();
     ui->solver2->clear();
