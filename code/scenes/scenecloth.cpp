@@ -417,8 +417,9 @@ void SceneCloth::update(double dt)
 
     // TODO: relaxation
 
-    int relaxationIterations = 50;
-    double epsilon = 0.001;
+    int relaxationIterations = 20;
+    const double epsilon = 0.01;
+    const double eps2 = epsilon * epsilon;
     for (int i = 0; i < relaxationIterations; ++i) {
         for (ForceSpring* f : springsStretch) {
             Particle* p1 = f->getParticle1();
@@ -429,15 +430,22 @@ void SceneCloth::update(double dt)
             double L = f->getRestLength();
             double currentLSq = dir.squaredNorm();
             
-            if (std::abs(currentLSq - L * L) > epsilon*epsilon) {
-                double currentL = dir.norm();
+            if (std::abs(currentLSq - L * L) > eps2) {
+                double currentL = std::sqrt(currentLSq);
                 double extraL = currentL - L;
 
                 double w1 = (not fixedParticle[p1->id]) ? 1 / p1->mass : 0;
                 double w2 = (not fixedParticle[p2->id]) ? 1 / p2->mass : 0;
 
-                p1->pos += w1 / (w1 + w2) *   dir * extraL / currentL;
-                p2->pos += w2 / (w1 + w2) * - dir * extraL / currentL;
+                double wSum = w1 + w2;
+
+                if (wSum > 0.0) {
+                    double scalar = extraL / (currentL * wSum);
+
+                    p1->pos += w1 *   dir * scalar;
+                    p2->pos += w2 * - dir * scalar;
+                }
+
             }
         }
     }
