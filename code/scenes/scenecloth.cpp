@@ -121,6 +121,8 @@ void SceneCloth::reset()
     double edgeY = dims[1]/numParticlesY;
     particleRadius = widget->getParticleRadius();
 
+    spacing = std::max(edgeY, edgeX);
+
     // create particles
     numParticles = numParticlesX * numParticlesY;
     fixedParticle = std::vector<bool>(numParticles, false);
@@ -467,16 +469,23 @@ void SceneCloth::mousePressed(const QMouseEvent* e, const Camera& cam)
         Vec3 origin = cam.getPos();
 
         selectedParticle = -1;
+
+        double closestSqrDist = INFINITY;
+
         for (int i = 0; i < numParticles; i++) {
-            // TODO: point-ray dist to check if we select one particle
+
             Particle* p = system.getParticle(i);
             Vec3 L = p->pos - origin;
             const double tca = L.dot(rayDir);
             if (tca < 0) continue;
             const double d2 = L.squaredNorm() - tca * tca;
-            if (d2 < p->radius * p->radius) {
+            if (d2 < closestSqrDist and d2 < spacing * spacing) {
                 selectedParticle = i;
-                break;
+                closestSqrDist = d2;
+                selectedParticleFixed = fixedParticle[i];
+                fixedParticle[i] = true;
+                if (d2 < p->radius * p->radius)
+                    break;
             }
         }
 
@@ -510,6 +519,8 @@ void SceneCloth::mouseMoved(const QMouseEvent* e, const Camera& cam)
 
 void SceneCloth::mouseReleased(const QMouseEvent*, const Camera&)
 {
+    if (selectedParticle >= 0)
+        fixedParticle[selectedParticle] = selectedParticleFixed;
     selectedParticle = -1;
 }
 

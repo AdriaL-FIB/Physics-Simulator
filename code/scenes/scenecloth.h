@@ -88,6 +88,8 @@ protected:
     double clothWidth, clothHeight;
     int numParticles, numParticlesX, numParticlesY;
     int selectedParticle = -1;
+    bool selectedParticleFixed;
+    double spacing;
 
     // collision properties
     bool checkCollisions = true;
