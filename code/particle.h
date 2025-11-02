@@ -12,7 +12,7 @@ public:
     Vec3 pos, prevPos;
     Vec3 vel;
     Vec3 force;
-    double mass;
+    double mass, invMass;
     double radius = 1.0;
     double life   = 0.0;
     Vec3 color    = Vec3(1, 1, 1);
@@ -24,6 +24,7 @@ public:
         force   = Vec3(0.0, 0.0, 0.0);
         prevPos = pos;
         mass    = 1.0;
+        invMass = 1.0;
     }
 
     Particle(const Vec3& p, const Vec3& v, float m) {
@@ -32,6 +33,7 @@ public:
         force	= Vec3(0.0, 0.0, 0.0);
         prevPos = pos;
         mass	= m;
+        invMass = 1 / m;
     }
 
     Particle(const Particle& p) {
@@ -41,6 +43,7 @@ public:
         force   = p.force;
         prevPos = p.pos;
         mass    = p.mass;
+        invMass = p.invMass;
         color   = p.color;
         radius  = p.radius;
         life    = p.life;

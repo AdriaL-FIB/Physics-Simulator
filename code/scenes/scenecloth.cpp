@@ -136,14 +136,15 @@ void SceneCloth::reset()
             fixedParticle[idx] = idx <= numParticlesY - 1;
             double tx = i*edgeX - 0.5*clothWidth;
             double ty = j*edgeY - 0.5*clothHeight;
-            Vec3 pos = Vec3(ty+edgeY, 70 - tx - edgeX, 0);
+            Vec3 pos = Vec3(ty+edgeY, 70 - tx - edgeX, - 20 - tx - edgeX);
 
             Particle* p = new Particle();
             p->id = idx;
             p->pos = pos;
             p->prevPos = pos;
             p->vel = Vec3(0,0,0);
-            p->mass = 1;
+            p->mass = 1.0;
+            p->invMass = 1 / p->mass;
             p->radius = particleRadius;
             p->color = Vec3(235/255.0, 51/255.0, 36/255.0);
 
@@ -419,7 +420,7 @@ void SceneCloth::update(double dt)
 
     // TODO: relaxation
 
-    int relaxationIterations = 20;
+    int relaxationIterations = 10;
     const double epsilon = 0.01;
     const double eps2 = epsilon * epsilon;
     for (int i = 0; i < relaxationIterations; ++i) {
@@ -436,8 +437,8 @@ void SceneCloth::update(double dt)
                 double currentL = std::sqrt(currentLSq);
                 double extraL = currentL - L;
 
-                double w1 = (not fixedParticle[p1->id]) ? 1 / p1->mass : 0;
-                double w2 = (not fixedParticle[p2->id]) ? 1 / p2->mass : 0;
+                double w1 = (not fixedParticle[p1->id]) ? p1->invMass : 0;
+                double w2 = (not fixedParticle[p2->id]) ? p2->invMass : 0;
 
                 double wSum = w1 + w2;
 
@@ -490,14 +491,14 @@ void SceneCloth::mousePressed(const QMouseEvent* e, const Camera& cam)
             if (d2 < closestSqrDist and d2 < spacing * spacing) {
                 selectedParticle = i;
                 closestSqrDist = d2;
-                selectedParticleFixed = fixedParticle[i];
-                fixedParticle[i] = true;
                 if (d2 < p->radius * p->radius)
                     break;
             }
         }
 
         if (selectedParticle >= 0) {
+            selectedParticleFixed = fixedParticle[selectedParticle];
+            fixedParticle[selectedParticle] = true;
             cursorWorldPos = system.getParticle(selectedParticle)->pos;
         }
     }
@@ -535,7 +536,7 @@ void SceneCloth::mouseReleased(const QMouseEvent*, const Camera&)
 void SceneCloth::keyPressed(const QKeyEvent* e, const Camera&)
 {
     if (selectedParticle >= 0 && e->key() == Qt::Key_F) {
-        fixedParticle[selectedParticle] = true;
+        selectedParticleFixed = not selectedParticleFixed;
         Particle* p = system.getParticle(selectedParticle);
         p->prevPos = p->pos;
         p->vel = Vec3(0,0,0);
