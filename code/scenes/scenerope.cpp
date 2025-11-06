@@ -63,6 +63,8 @@ void SceneRope::initialize() {
     // colliders
     colliderBall.setCenter(Vec3(0,-50,0));
     colliderBall.setRadius(30);
+
+    sceneColliders.push_back(&colliderBall);
 }
 
 void SceneRope::reset()
@@ -221,10 +223,7 @@ void SceneRope::paint(const Camera& camera) {
 
     // draw collision sphere
     vaoSphereL->bind();
-    Vec3 cc = colliderBall.getCenter();
-    modelMat = QMatrix4x4();
-    modelMat.translate(cc[0], cc[1], cc[2]);
-    modelMat.scale(colliderBall.getRadius());
+    modelMat = getSphereModelMatrix(colliderBall);
     shaderPhong->setUniformValue("ModelMatrix", modelMat);
     shaderPhong->setUniformValue("matdiff", 0.8f, 0.8f, 0.8f);
     shaderPhong->setUniformValue("matspec", 0.0f, 0.0f, 0.0f);
@@ -320,7 +319,7 @@ void SceneRope::mouseMoved(const QMouseEvent* e, const Camera& cam)
     if (e->modifiers() & Qt::ControlModifier) {
         double d = -(colliderBall.getCenter() - cam.getPos()).dot(cam.zAxis());
         Vec3 disp = cam.worldSpaceDisplacement(dx, -dy, d);
-        colliderBall.setCenter(colliderBall.getCenter() + disp);
+        colliderBall.move(disp);
     }
 }
 

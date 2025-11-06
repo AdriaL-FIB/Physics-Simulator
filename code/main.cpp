@@ -5,8 +5,20 @@
 #include <QtWidgets/QStyleFactory>
 #include <QtCore/QLibraryInfo>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 int main(int argc, char *argv[])
 {
+#ifdef _WIN32
+    // Show console window on Windows for debug output
+    AllocConsole();
+    FILE* fp;
+    freopen_s(&fp, "CONOUT$", "w", stdout);
+    freopen_s(&fp, "CONOUT$", "w", stderr);
+#endif
+
     QApplication app(argc, argv);
 
     QStringList styles = QStyleFactory::keys();

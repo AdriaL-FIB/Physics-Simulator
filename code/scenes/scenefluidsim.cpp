@@ -3,6 +3,9 @@
 #include "model.h"
 #include <QOpenGLFunctions_3_3_Core>
 #include <iostream>
+#include <QOpenGLVersionFunctionsFactory>
+
+
 
 
 
@@ -85,11 +88,18 @@ void SceneFluidSim::initialize() {
 #if ENABLE_WIND
     // Setup wind/fan at ground level in positive Z corner
     // Bounds: [-50,0,-50] to [50,100,50]
-    // Center at corner (-55, 5, 40), blowing towards center (positive X)
+    // Fan positioned on the left wall (X = -50), blowing towards +X
     Vec3 windCenter(-55, 5, 40);     // center of outlet face (where air comes out)
     double windWidth = 10.0;         // cross-section width (Z axis)
     double windHeight = 10.0;        // cross-section height (Y axis)
     double windLength = 70.0;        // how far the air reaches (X axis)
+    double fanThickness = 2.0;       // thickness of the fan box itself
+    
+    // Calculate fan center and size for rendering
+    fanCenter = windCenter - Vec3(fanThickness, 0, 0);  // wind blows in +X, so fan is at -X
+    fanHalfSize = Vec3(fanThickness * 0.5, windHeight * 0.5, windWidth * 0.5);
+    
+    // Set up wind force
     fWind->setCenter(windCenter);
     fWind->setDimensions(windWidth, windHeight);
     fWind->setDirection(Vec3(1, 0, 0));  // blow towards +X (direction snaps to axis)
@@ -99,11 +109,10 @@ void SceneFluidSim::initialize() {
     fWind->setTimePointer(system.getTimePointer());
 #endif
 
-    //colliders.push_back(&colliderFloor);
-    //colliders.push_back(&colliderRamp);
-    colliders.push_back(&colliderSphere);
-    //colliders.push_back(&colliderBox);
-    colliders.push_back(&colliderBounds);
+    //sceneColliders.push_back(&colliderFloor);
+    //sceneColliders.push_back(&colliderRamp);
+    sceneColliders.push_back(&colliderSphere);
+    sceneColliders.push_back(&colliderBox);
 }
 
 
@@ -174,8 +183,10 @@ void SceneFluidSim::updateSimParams()
 
 void SceneFluidSim::paint(const Camera& camera) {
 
-    QOpenGLFunctions* glFuncs = nullptr;
-    glFuncs = QOpenGLContext::currentContext()->functions();
+    QOpenGLContext* context = QOpenGLContext::currentContext();
+
+    QOpenGLFunctions_3_3_Core* glFuncs = QOpenGLVersionFunctionsFactory::get<QOpenGLFunctions_3_3_Core>(context);
+    glFuncs->initializeOpenGLFunctions();
 
     shader->bind();
 
@@ -197,24 +208,24 @@ void SceneFluidSim::paint(const Camera& camera) {
     shader->setUniformValueArray("lightPos", lightPosCam, numLights);
     shader->setUniformValueArray("lightColor", lightColor, numLights);
 
-    // draw floor
-    vaoFloor->bind();
     QMatrix4x4 modelMat;
-    modelMat.scale(100, 1, 100);
-    shader->setUniformValue("ModelMatrix", modelMat);
-    shader->setUniformValue("matdiff", 0.8f, 0.8f, 0.8f);
-    shader->setUniformValue("matspec", 0.0f, 0.0f, 0.0f);
-    shader->setUniformValue("matshin", 0.0f);
-    glFuncs->glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    //// draw floor
+    //vaoFloor->bind();
+    //modelMat.scale(100, 1, 100);
+    //shader->setUniformValue("ModelMatrix", modelMat);
+    //shader->setUniformValue("matdiff", 0.8f, 0.8f, 0.8f);
+    //shader->setUniformValue("matspec", 0.0f, 0.0f, 0.0f);
+    //shader->setUniformValue("matshin", 0.0f);
+    //glFuncs->glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-    // draw ramp
-    modelMat = QMatrix4x4();
-    modelMat.rotate(30.0, QVector3D(1, 0, 0));
-    modelMat.translate(0, -6, 0);
-    modelMat.scale(100, 1, 100);
-    modelMat.translate(0, 0, -1);
-    shader->setUniformValue("ModelMatrix", modelMat);
-    glFuncs->glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    //// draw ramp
+    //modelMat = QMatrix4x4();
+    //modelMat.rotate(30.0, QVector3D(1, 0, 0));
+    //modelMat.translate(0, -6, 0);
+    //modelMat.scale(100, 1, 100);
+    //modelMat.translate(0, 0, -1);
+    //shader->setUniformValue("ModelMatrix", modelMat);
+    //glFuncs->glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     // draw the particles
     vaoSphereL->bind();
@@ -237,10 +248,7 @@ void SceneFluidSim::paint(const Camera& camera) {
 
     // draw sphere
     vaoSphereH->bind();
-    Vec3 cc = colliderSphere.getCenter();
-    modelMat = QMatrix4x4();
-    modelMat.translate(cc[0], cc[1], cc[2]);
-    modelMat.scale(colliderSphere.getRadius());
+    modelMat = getSphereModelMatrix(colliderSphere);
     shader->setUniformValue("ModelMatrix", modelMat);
     shader->setUniformValue("matdiff", 0.8f, 0.4f, 0.4f);
     shader->setUniformValue("matspec", 0.0f, 0.0f, 0.0f);
@@ -249,11 +257,7 @@ void SceneFluidSim::paint(const Camera& camera) {
 
     // draw box
     vaoCube->bind();
-    cc = colliderBox.getCenter();
-    Vec3 hs = 0.5*colliderBox.getSize();
-    modelMat = QMatrix4x4();
-    modelMat.translate(cc[0], cc[1], cc[2]);
-    modelMat.scale(hs[0], hs[1], hs[2]);
+    modelMat = getAABBModelMatrix(colliderBox);
     shader->setUniformValue("ModelMatrix", modelMat);
     shader->setUniformValue("matdiff", 0.4f, 0.8f, 0.4f);
     shader->setUniformValue("matspec", 0.0f, 0.0f, 0.0f);
@@ -261,34 +265,9 @@ void SceneFluidSim::paint(const Camera& camera) {
     glFuncs->glDrawElements(GL_TRIANGLES, 3*2*6, GL_UNSIGNED_INT, 0);
 
 #if ENABLE_WIND
-    // draw wind/fan box (the physical fan, not the air)
+    // draw wind/fan box (the physical fan)
     if (fWind && windEnabled) {
-        Vec3 outletCenter = fWind->getCenter();      // where air comes out
-        Vec3 windDir = fWind->getDirection();
-        double windWidth = fWind->getWidth();
-        double windHeight = fWind->getHeight();
-        
-        // The fan box should be behind the outlet, opposite to wind direction
-        // Fan dimensions: same height and width as air region, but fixed thickness
-        double fanThickness = 2.0; // fixed depth of the fan box
-        
-        // Position the fan box behind the outlet
-        Vec3 fanCenter = outletCenter - windDir * fanThickness;
-        
-        // Fan half-size: thickness in the direction of flow, same width/height as air cross-section
-        Vec3 fanHalfSize;
-        // Determine which axis is flow direction and set dimensions accordingly
-        if (std::abs(windDir[0]) > 0.5) {
-            // Flow along X axis
-            fanHalfSize = Vec3(fanThickness, windHeight * 0.5, windWidth * 0.5);
-        } else if (std::abs(windDir[1]) > 0.5) {
-            // Flow along Y axis
-            fanHalfSize = Vec3(windWidth * 0.5, fanThickness, windHeight * 0.5);
-        } else {
-            // Flow along Z axis
-            fanHalfSize = Vec3(windWidth * 0.5, windHeight * 0.5, fanThickness);
-        }
-        
+        vaoCube->bind();
         modelMat = QMatrix4x4();
         modelMat.translate(fanCenter[0], fanCenter[1], fanCenter[2]);
         modelMat.scale(fanHalfSize[0], fanHalfSize[1], fanHalfSize[2]);
@@ -302,6 +281,21 @@ void SceneFluidSim::paint(const Camera& camera) {
         glFuncs->glDrawElements(GL_TRIANGLES, 3*2*6, GL_UNSIGNED_INT, 0);
     }
 #endif
+    
+    // Draw colliderBounds with semi-transparent wireframe effect
+    // We draw it with a very low alpha so it's barely visible but shows the boundaries
+    vaoCube->bind();
+    modelMat = getAABBModelMatrix(colliderBounds);
+    shader->setUniformValue("ModelMatrix", modelMat);
+    shader->setUniformValue("matdiff", 0.5f, 0.5f, 0.5f);
+    shader->setUniformValue("matspec", 0.0f, 0.0f, 0.0f);
+    shader->setUniformValue("matshin", 0.0f);
+    
+    glFuncs->glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+    glFuncs->glDrawElements(GL_TRIANGLES, 3*2*6, GL_UNSIGNED_INT, 0);
+
+    glFuncs->glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     
     vaoCube->release();
     shader->release();
@@ -354,10 +348,14 @@ void SceneFluidSim::update(double dt) {
     // collisions
     Collision colInfo;
     for (Particle* p : system.getParticles()) {
-        for (Collider* c : colliders) {
+        for (Collider* c : sceneColliders) {
             while (c->testCollision(p, colInfo)) {
                 c->resolveCollision(p, colInfo, kBounce, kFriction);
             }
+        }
+
+        while (colliderBounds.testCollision(p, colInfo)) {
+            colliderBounds.resolveCollision(p, colInfo, kBounce, kFriction);
         }
     }
 
@@ -372,32 +370,80 @@ void SceneFluidSim::update(double dt) {
     }
 }
 
-void SceneFluidSim::mousePressed(const QMouseEvent* e, const Camera&)
-{
-    mouseX = e->pos().x();
-    mouseY = e->pos().y();
-}
+//void SceneFluidSim::mousePressed(const QMouseEvent* e, const Camera&)
+//{
+//    mouseX = e->pos().x();
+//    mouseY = e->pos().y();
+//}
 
 void SceneFluidSim::mouseMoved(const QMouseEvent* e, const Camera& cam)
 {
-    int dx = e->pos().x() - mouseX;
-    int dy = e->pos().y() - mouseY;
-    mouseX = e->pos().x();
-    mouseY = e->pos().y();
-
+    Scene::mouseMoved(e, cam);
     Vec3 disp = cam.worldSpaceDisplacement(dx, -dy, cam.getEyeDistance());
 
-    // example
     if (e->buttons() & Qt::RightButton) {
         if (!e->modifiers()) {
             // move fountain
             fountainPos += disp;
         }
-        else if (e->modifiers() & Qt::ShiftModifier){
-            // move box
-            colliderBox.setFromCenterSize(
-                        colliderBox.getCenter() + disp,
-                        colliderBox.getSize());
+        else if (e->modifiers() & Qt::AltModifier) {
+            // move bounds
+            colliderBounds.move(disp);
+            
+#if ENABLE_WIND
+            // When bounds move, update fan position to keep it on the wall
+            // Get the new wall position (min X of bounds)
+            Vec3 boundsMin = colliderBounds.getMin();
+            Vec3 boundsMax = colliderBounds.getMax();
+            
+            // Update fan X position to be on the left wall (min X)
+            // Keep Y and Z relative positions within bounds
+            double wallX = boundsMin[0];
+            double windOutletX = wallX - fanHalfSize[0] * 2.0; // outlet is at wallX, fan is behind
+            
+            // Clamp fan position to be within bounds height and depth
+            double minY = boundsMin[1] + fanHalfSize[1];
+            double maxY = boundsMax[1] - fanHalfSize[1];
+            double minZ = boundsMin[2] + fanHalfSize[2];
+            double maxZ = boundsMax[2] - fanHalfSize[2];
+            
+            fanCenter[0] = windOutletX - fanHalfSize[0];
+            fanCenter[1] = std::max(minY, std::min(maxY, fanCenter[1]));
+            fanCenter[2] = std::max(minZ, std::min(maxZ, fanCenter[2]));
+            
+            // Update wind outlet position
+            Vec3 windCenter = fanCenter + Vec3(fanHalfSize[0] * 2.0, 0, 0);
+            fWind->setCenter(windCenter);
+#endif
         }
+#if ENABLE_WIND
+        else if (e->modifiers() & Qt::ShiftModifier) {
+            // move fan on the wall plane (YZ plane, X is fixed to wall)
+            // Project displacement to YZ plane
+            Vec3 planeDisp = disp;
+            planeDisp[0] = 0;  // no movement in X direction
+            
+            fanCenter += planeDisp;
+            
+            // Clamp fan position to be within bounds
+            Vec3 boundsMin = colliderBounds.getMin();
+            Vec3 boundsMax = colliderBounds.getMax();
+            
+            double wallX = boundsMin[0];
+            double minY = boundsMin[1] + fanHalfSize[1];
+            double maxY = boundsMax[1] - fanHalfSize[1];
+            double minZ = boundsMin[2] + fanHalfSize[2];
+            double maxZ = boundsMax[2] - fanHalfSize[2];
+            
+            // Keep fan on the wall and within bounds
+            fanCenter[0] = wallX - fanHalfSize[0];
+            fanCenter[1] = std::max(minY, std::min(maxY, fanCenter[1]));
+            fanCenter[2] = std::max(minZ, std::min(maxZ, fanCenter[2]));
+            
+            // Update wind force position
+            Vec3 windCenter = fanCenter + Vec3(fanHalfSize[0] * 2.0, 0, 0);
+            fWind->setCenter(windCenter);
+        }
+#endif
     }
 }

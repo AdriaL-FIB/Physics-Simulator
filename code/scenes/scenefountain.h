@@ -23,8 +23,8 @@ public:
     virtual void update(double dt);
     virtual void paint(const Camera& cam);
 
-    virtual void mousePressed(const QMouseEvent* e, const Camera& cam);
-    virtual void mouseMoved(const QMouseEvent* e, const Camera& cam);
+    // virtual void mousePressed(const QMouseEvent* e, const Camera& cam);
+     virtual void mouseMoved(const QMouseEvent* e, const Camera& cam);
 
     virtual void getSceneBounds(Vec3& bmin, Vec3& bmax) {
         bmin = Vec3(-110, -10, -110);
@@ -55,8 +55,6 @@ protected:
     ColliderPlane colliderFloor, colliderRamp;
     ColliderSphere colliderSphere;
     ColliderAABB   colliderBox;
-
-    std::vector<Collider*> colliders;
 
     double kBounce, kFriction;
     double emitRate;

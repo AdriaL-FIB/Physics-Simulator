@@ -47,6 +47,17 @@ bool ColliderPlane::testCollision(const Particle* p, Collision& colInfo) const
     return 0 <= lambda and lambda <= 1;
 }
 
+bool ColliderPlane::testRayIntersection(const Vec3& O, const Vec3& ray, double& lambda) const
+{
+    lambda = -(this->planeN.dot(O) + this->planeD) / this->planeN.dot(ray);
+    return lambda >= 0;
+}
+
+void ColliderPlane::move(const Vec3& dir)
+{
+    this->planeD -= this->planeN.dot(dir);
+}
+
 
 
 /*
@@ -87,6 +98,29 @@ bool ColliderSphere::testCollision(const Particle* p, Collision& colInfo) const
     return true;
 }
 
+bool ColliderSphere::testRayIntersection(const Vec3& O, const Vec3& ray, double& lambda) const
+{
+    double a = ray.dot(ray);
+    double b = 2 * ray.dot(O - this->center);
+    double c = this->center.squaredNorm() + O.squaredNorm() - 2 * O.dot(this->center) - (this->radius) * (this->radius);
+
+    double D = b * b - 4.0 * a * c;
+    if (D < 0) return false;
+
+    double sqrtD = std::sqrt(D);
+
+    double l1 = (-b + sqrtD) / (2 * a);
+    double l2 = (-b - sqrtD) / (2 * a);
+
+    lambda = (0.0 <= l2) ? l2 : ((0.0 <= l1) ? l1 : -1.0);
+
+    return lambda >= 0;
+}
+
+void ColliderSphere::move(const Vec3& dir)
+{
+    this->center += dir;
+}
 
 
 /*
@@ -157,4 +191,27 @@ bool ColliderAABB::testCollision(const Particle* p, Collision& colInfo) const
 
         return true;
     }
+}
+
+bool ColliderAABB::testRayIntersection(const Vec3& O, const Vec3& ray, double& lambda) const
+{
+    Vec3 lmin = (bmin - O).cwiseQuotient(ray);
+    Vec3 lmax = (bmax - O).cwiseQuotient(ray);
+
+    Vec3 l_near = lmin.cwiseMin(lmax);
+    Vec3 l_far = lmin.cwiseMax(lmax);
+
+    double l_in = l_near.maxCoeff();
+    double l_out = l_far.minCoeff();
+    lambda = l_in;
+    bool collision = (l_in <= l_out) && 0 <= l_in;
+
+    return collision;
+}
+
+void ColliderAABB::move(const Vec3& dir)
+{
+    this->bmin += dir;
+    this->bmax += dir;
+    this->center += dir;
 }

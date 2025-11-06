@@ -33,7 +33,7 @@ public:
     virtual void update(double dt);
     virtual void paint(const Camera& cam);
 
-    virtual void mousePressed(const QMouseEvent* e, const Camera& cam);
+    //virtual void mousePressed(const QMouseEvent* e, const Camera& cam);
     virtual void mouseMoved(const QMouseEvent* e, const Camera& cam);
 
     virtual void getSceneBounds(Vec3& bmin, Vec3& bmax) {
@@ -72,8 +72,6 @@ protected:
 
     ColliderAABB colliderBounds;
 
-    std::vector<Collider*> colliders;
-
     double kBounce, kFriction;
     double emitRate;
     double maxParticleLife;
@@ -82,6 +80,8 @@ protected:
     bool emitParticles;
 #if ENABLE_WIND
     bool windEnabled;  // runtime control to enable/disable wind force
+    Vec3 fanCenter;    // center of the fan box (for rendering and movement)
+    Vec3 fanHalfSize;  // half-size of the fan box
 #endif
 
     Vec3 fountainPos;

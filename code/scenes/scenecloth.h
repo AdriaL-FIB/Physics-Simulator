@@ -78,7 +78,6 @@ protected:
     std::vector<ForceSpring*> springsStretch;
     std::vector<ForceSpring*> springsShear;
     std::vector<ForceSpring*> springsBend;
-    std::vector<Collider*> colliders;
 
     ColliderSphere colliderBall;
     ColliderAABB colliderCube, colliderWalls;
@@ -97,8 +96,8 @@ protected:
     double colFriction = 0.05;
     double particleRadius = 1;
 
-    // mouse interaction
-    int grabX, grabY;
+    //// mouse interaction
+    //int grabX, grabY;
     Vec3 cursorWorldPos;
 };
 

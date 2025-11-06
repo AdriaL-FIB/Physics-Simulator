@@ -10,6 +10,10 @@ struct Collision {
     Vec3 normal;
 };
 
+struct Intersection {
+    double l1, l2;
+};
+
 
 // Abstract interface
 class Collider
@@ -20,8 +24,11 @@ public:
 
     virtual bool isInside(const Particle* p) const = 0;
     virtual bool testCollision(const Particle* p, Collision& colInfo) const = 0;
+    virtual bool testRayIntersection(const Vec3& O, const Vec3& ray, double& lambda) const = 0;
 
     virtual void resolveCollision(Particle* p, const Collision& col, double kElastic, double kFriction) const;
+
+    virtual void move(const Vec3& dir) = 0;
 };
 
 
@@ -34,9 +41,14 @@ public:
     virtual ~ColliderPlane() {}
 
     void setPlane(const Vec3& n, double d) { this->planeN = n; this->planeD = d; }
+    Vec3 getNormal() const { return planeN; }
+    double getD() const { return planeD; }
 
     virtual bool isInside(const Particle* p) const;
     virtual bool testCollision(const Particle* p, Collision& colInfo) const;
+    virtual bool testRayIntersection(const Vec3& O, const Vec3& ray, double& lambda) const;
+
+    virtual void move(const Vec3& dir);
 
 protected:
     Vec3 planeN;
@@ -59,6 +71,8 @@ public:
 
     virtual bool isInside(const Particle* p) const;
     virtual bool testCollision(const Particle* p, Collision& colInfo) const;
+    virtual bool testRayIntersection(const Vec3& O, const Vec3& ray, double& lambda) const;
+    virtual void move(const Vec3& dir);
 
 protected:
     Vec3 center;
@@ -93,6 +107,8 @@ public:
     virtual bool isInside(const Particle* p) const;
     virtual bool isInside(const Vec3& pos) const;
     virtual bool testCollision(const Particle* p, Collision& colInfo) const;
+    virtual bool testRayIntersection(const Vec3& O, const Vec3& ray, double& lambda) const;
+    virtual void move(const Vec3& dir);
 
 protected:
     Vec3 bmin;

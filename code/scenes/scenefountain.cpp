@@ -60,10 +60,10 @@ void SceneFountain::initialize() {
     colliderSphere.setRadius(20);
     colliderBox.setFromBounds(Vec3(30,0,20), Vec3(50,10,60));
 
-    colliders.push_back(&colliderFloor);
-    colliders.push_back(&colliderRamp);
-    colliders.push_back(&colliderSphere);
-    colliders.push_back(&colliderBox);
+    sceneColliders.push_back(&colliderFloor);
+    sceneColliders.push_back(&colliderRamp);
+    sceneColliders.push_back(&colliderSphere);
+    sceneColliders.push_back(&colliderBox);
 }
 
 
@@ -126,8 +126,7 @@ void SceneFountain::paint(const Camera& camera) {
 
     // draw floor
     vaoFloor->bind();
-    QMatrix4x4 modelMat;
-    modelMat.scale(100, 1, 100);
+    QMatrix4x4 modelMat = getPlaneModelMatrix(colliderFloor, 100.0f);
     shader->setUniformValue("ModelMatrix", modelMat);
     shader->setUniformValue("matdiff", 0.8f, 0.8f, 0.8f);
     shader->setUniformValue("matspec", 0.0f, 0.0f, 0.0f);
@@ -135,11 +134,7 @@ void SceneFountain::paint(const Camera& camera) {
     glFuncs->glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     // draw ramp
-    modelMat = QMatrix4x4();
-    modelMat.rotate(30.0, QVector3D(1, 0, 0));
-    modelMat.translate(0, -6, 0);
-    modelMat.scale(100, 1, 100);
-    modelMat.translate(0, 0, -1);
+    modelMat = getPlaneModelMatrix(colliderRamp, 100.0f);
     shader->setUniformValue("ModelMatrix", modelMat);
     glFuncs->glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
@@ -164,10 +159,7 @@ void SceneFountain::paint(const Camera& camera) {
 
     // draw sphere
     vaoSphereH->bind();
-    Vec3 cc = colliderSphere.getCenter();
-    modelMat = QMatrix4x4();
-    modelMat.translate(cc[0], cc[1], cc[2]);
-    modelMat.scale(colliderSphere.getRadius());
+    modelMat = getSphereModelMatrix(colliderSphere);
     shader->setUniformValue("ModelMatrix", modelMat);
     shader->setUniformValue("matdiff", 0.8f, 0.4f, 0.4f);
     shader->setUniformValue("matspec", 0.0f, 0.0f, 0.0f);
@@ -176,11 +168,7 @@ void SceneFountain::paint(const Camera& camera) {
 
     // draw box
     vaoCube->bind();
-    cc = colliderBox.getCenter();
-    Vec3 hs = 0.5*colliderBox.getSize();
-    modelMat = QMatrix4x4();
-    modelMat.translate(cc[0], cc[1], cc[2]);
-    modelMat.scale(hs[0], hs[1], hs[2]);
+    modelMat = getAABBModelMatrix(colliderBox);
     shader->setUniformValue("ModelMatrix", modelMat);
     shader->setUniformValue("matdiff", 0.4f, 0.8f, 0.4f);
     shader->setUniformValue("matspec", 0.0f, 0.0f, 0.0f);
@@ -230,7 +218,7 @@ void SceneFountain::update(double dt) {
     // collisions
     Collision colInfo;
     for (Particle* p : system.getParticles()) {
-        for (Collider* c : colliders) {
+        for (Collider* c : sceneColliders) {
             if (c->testCollision(p, colInfo)) {
                 c->resolveCollision(p, colInfo, kBounce, kFriction);
             }
@@ -248,18 +236,15 @@ void SceneFountain::update(double dt) {
     }
 }
 
-void SceneFountain::mousePressed(const QMouseEvent* e, const Camera&)
-{
-    mouseX = e->pos().x();
-    mouseY = e->pos().y();
-}
+//void SceneFountain::mousePressed(const QMouseEvent* e, const Camera&)
+//{
+//    mouseX = e->pos().x();
+//    mouseY = e->pos().y();
+//}
 
 void SceneFountain::mouseMoved(const QMouseEvent* e, const Camera& cam)
 {
-    int dx = e->pos().x() - mouseX;
-    int dy = e->pos().y() - mouseY;
-    mouseX = e->pos().x();
-    mouseY = e->pos().y();
+    Scene::mouseMoved(e, cam);
 
     Vec3 disp = cam.worldSpaceDisplacement(dx, -dy, cam.getEyeDistance());
 
@@ -268,12 +253,6 @@ void SceneFountain::mouseMoved(const QMouseEvent* e, const Camera& cam)
         if (!e->modifiers()) {
             // move fountain
             fountainPos += disp;
-        }
-        else if (e->modifiers() & Qt::ShiftModifier){
-            // move box
-            colliderBox.setFromCenterSize(
-                        colliderBox.getCenter() + disp,
-                        colliderBox.getSize());
         }
     }
 }

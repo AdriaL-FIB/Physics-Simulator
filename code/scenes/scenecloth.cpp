@@ -83,9 +83,9 @@ void SceneCloth::initialize() {
     //colliderWalls.setFromCenterSize(Vec3(0, 0, 0), Vec3(200, 200, 200));
 
     // setup colliders
-    colliders.clear();
-    colliders.push_back(&colliderBall);
-    colliders.push_back(&colliderCube);
+    sceneColliders.clear();
+    sceneColliders.push_back(&colliderBall);
+    sceneColliders.push_back(&colliderCube);
     //colliders.push_back(&colliderWalls);
 }
 
@@ -325,10 +325,7 @@ void SceneCloth::paint(const Camera& camera)
   
     // draw sphere collider (ball)
     vaoSphereL->bind();
-    Vec3 cc = colliderBall.getCenter();
-    modelMat = QMatrix4x4();
-    modelMat.translate(cc[0], cc[1], cc[2]);
-    modelMat.scale(colliderBall.getRadius());
+    modelMat = getSphereModelMatrix(colliderBall);
     shaderPhong->setUniformValue("ModelMatrix", modelMat);
     shaderPhong->setUniformValue("matdiff", 0.8f, 0.4f, 0.4f);
     shaderPhong->setUniformValue("matspec", 0.0f, 0.0f, 0.0f);
@@ -337,11 +334,7 @@ void SceneCloth::paint(const Camera& camera)
 
     // draw box collider (cube)
     vaoCube->bind();
-    cc = colliderCube.getCenter();
-    Vec3 hs = 0.5*colliderCube.getSize();
-    modelMat = QMatrix4x4();
-    modelMat.translate(cc[0], cc[1], cc[2]);
-    modelMat.scale(hs[0], hs[1], hs[2]);
+    modelMat = getAABBModelMatrix(colliderCube);
     shaderPhong->setUniformValue("ModelMatrix", modelMat);
     shaderPhong->setUniformValue("matdiff", 0.4f, 0.8f, 0.4f);
     shaderPhong->setUniformValue("matspec", 0.0f, 0.0f, 0.0f);
@@ -456,7 +449,7 @@ void SceneCloth::update(double dt)
     // collisions
     Collision colInfo;
     for (Particle* p : system.getParticles()) {
-        for (Collider* c : colliders) {
+        for (Collider* c : sceneColliders) {
             if (c->testCollision(p, colInfo)) {
                 c->resolveCollision(p, colInfo, colBounce, colFriction);
             }
@@ -469,8 +462,8 @@ void SceneCloth::update(double dt)
 
 void SceneCloth::mousePressed(const QMouseEvent* e, const Camera& cam)
 {
-    grabX = e->pos().x();
-    grabY = e->pos().y();
+    // sets grabX, grabY
+    Scene::mousePressed(e, cam);
 
     if (!(e->modifiers() & Qt::ControlModifier)) {
 
@@ -506,10 +499,12 @@ void SceneCloth::mousePressed(const QMouseEvent* e, const Camera& cam)
 
 void SceneCloth::mouseMoved(const QMouseEvent* e, const Camera& cam)
 {
-    int dx = e->pos().x() - grabX;
-    int dy = e->pos().y() - grabY;
-    grabX = e->pos().x();
-    grabY = e->pos().y();
+    // sets dx, dy, grabX, grabY
+    Scene::mouseMoved(e, cam);
+    //dx = e->pos().x() - grabX;
+    //dy = e->pos().y() - grabY;
+    //grabX = e->pos().x();
+    //grabY = e->pos().y();
 
     if (e->modifiers() & Qt::ControlModifier) {
 
@@ -526,8 +521,9 @@ void SceneCloth::mouseMoved(const QMouseEvent* e, const Camera& cam)
     }
 }
 
-void SceneCloth::mouseReleased(const QMouseEvent*, const Camera&)
+void SceneCloth::mouseReleased(const QMouseEvent* e, const Camera& cam)
 {
+    Scene::mouseReleased(e, cam);
     if (selectedParticle >= 0)
         fixedParticle[selectedParticle] = selectedParticleFixed;
     selectedParticle = -1;

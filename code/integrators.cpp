@@ -228,10 +228,8 @@ void IntegratorRK2::step(ParticleSystem &system, double dt) {
     system.setPreviousPositions(system.getPositions());
     system.setState(x2);
 
-    // Required?
-    system.setTime(t1+dt*0.5);
+    system.setTime(t1+dt);
     system.updateForces();
-    // ---------
 
     Vecd k2 = system.getDerivative();
     Vecd x = x1 + dt/2 * (k1 + k2);
