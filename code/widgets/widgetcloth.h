@@ -23,6 +23,7 @@ public:
     Vec2 getDimensions()       const;
     Vec2i getNumParticles()    const;
     double getParticleRadius() const;
+    int getRelaxationSteps()   const;
 
     bool showParticles()       const;
 

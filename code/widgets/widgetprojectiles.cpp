@@ -60,6 +60,11 @@ bool WidgetProjectiles::isDragEnabled() const
     return ui->dragForce->isChecked();
 }
 
+bool WidgetProjectiles::useQuadraticDrag() const
+{
+    return ui->useQuadraticDrag->isChecked();
+}
+
 void WidgetProjectiles::setSolverTypes(const std::vector<std::string>& solvers) {
     ui->solver1->clear();
     ui->solver2->clear();

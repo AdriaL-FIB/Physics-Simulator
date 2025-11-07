@@ -12,10 +12,12 @@ public:
     Vec3 pos, prevPos;
     Vec3 vel;
     Vec3 force;
-    double mass, invMass;
+    double mass;
+    double invMass;
     double radius = 1.0;
     double life   = 0.0;
-    Vec3 color    = Vec3(1, 1, 1);
+    Vec3 color    = Vec3(153 / 255.0, 217 / 255.0, 234 / 255.0);
+    Vec3 defaultColor = Vec3(153 / 255.0, 217 / 255.0, 234 / 255.0);
     unsigned int id = 0;
 
     Particle() {
@@ -47,6 +49,12 @@ public:
         color   = p.color;
         radius  = p.radius;
         life    = p.life;
+    }
+
+    void setMass(double m) { mass = m; invMass = 1 / m; }
+    void fix(bool b) {
+        if (b) invMass = 0;
+        else invMass = 1 / mass;
     }
 
     ~Particle() {

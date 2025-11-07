@@ -143,10 +143,10 @@ void SceneCloth::reset()
             p->pos = pos;
             p->prevPos = pos;
             p->vel = Vec3(0,0,0);
-            p->mass = 1.0;
-            p->invMass = 1 / p->mass;
+            p->setMass(1.0);
             p->radius = particleRadius;
             p->color = Vec3(235/255.0, 51/255.0, 36/255.0);
+            p->fix(fixedParticle[idx]);
 
             system.addParticle(p);
             fGravity->addInfluencedParticle(p);
@@ -171,9 +171,9 @@ void SceneCloth::reset()
             if (f) { springsStretch.push_back(f); system.addForce(f); }
 
             // Shear spring
-            f = createSpringForceBetween(i - 1, j - 1, i + 1, j + 1);
+            f = createSpringForceBetween(i, j, i + 1, j + 1);
             if (f) { springsShear.push_back(f); system.addForce(f); }
-            f = createSpringForceBetween(i - 1, j + 1, i + 1, j - 1);
+            f = createSpringForceBetween(i, j, i + 1, j - 1);
             if (f) { springsShear.push_back(f); system.addForce(f); }
 
             // Bend
@@ -267,12 +267,17 @@ void SceneCloth::updateSimParams()
         p->radius = widget->getParticleRadius();
     }
 
+    relaxationSteps = widget->getRelaxationSteps();
+
     showParticles = widget->showParticles();
 }
 
 void SceneCloth::freeAnchors()
 {
     fixedParticle = std::vector<bool>(numParticles, false);
+    for (Particle* p : system.getParticles()) {
+        p->fix(false);
+    }
 }
 
 void SceneCloth::paint(const Camera& camera)
@@ -404,19 +409,15 @@ void SceneCloth::update(double dt)
     // user interaction
     if (selectedParticle >= 0) {
         Particle* p = system.getParticle(selectedParticle);
-        // p->pos = ?; TODO: assign cursor world position (see code, it's already computed)
         p->vel = Vec3(0,0,0);
         p->pos = cursorWorldPos;
 
         // TODO: test and resolve for collisions during user movement
     }
 
-    // TODO: relaxation
-
-    int relaxationIterations = 10;
     const double epsilon = 0.01;
     const double eps2 = epsilon * epsilon;
-    for (int i = 0; i < relaxationIterations; ++i) {
+    for (int i = 0; i < relaxationSteps; ++i) {
         for (ForceSpring* f : springsStretch) {
             Particle* p1 = f->getParticle1();
             Particle* p2 = f->getParticle2();
@@ -492,6 +493,7 @@ void SceneCloth::mousePressed(const QMouseEvent* e, const Camera& cam)
         if (selectedParticle >= 0) {
             selectedParticleFixed = fixedParticle[selectedParticle];
             fixedParticle[selectedParticle] = true;
+            system.getParticle(selectedParticle)->fix(true);
             cursorWorldPos = system.getParticle(selectedParticle)->pos;
         }
     }
@@ -524,8 +526,10 @@ void SceneCloth::mouseMoved(const QMouseEvent* e, const Camera& cam)
 void SceneCloth::mouseReleased(const QMouseEvent* e, const Camera& cam)
 {
     Scene::mouseReleased(e, cam);
-    if (selectedParticle >= 0)
+    if (selectedParticle >= 0) {
         fixedParticle[selectedParticle] = selectedParticleFixed;
+        system.getParticle(selectedParticle)->fix(selectedParticleFixed);
+    }
     selectedParticle = -1;
 }
 

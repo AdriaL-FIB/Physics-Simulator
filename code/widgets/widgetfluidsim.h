@@ -25,6 +25,11 @@ public:
     double getRestDensity()    const;
     double getViscosityConstant()    const;
     bool getEnableWind()    const;
+    double getWindStrength()    const;
+    double getFanWidth()    const;
+    double getFanHeight()    const;
+    double getFanLength()    const;
+    int getColorMode()    const;
 
     int    getIntegratorType() const;
     void   setIntegratorType(int i);

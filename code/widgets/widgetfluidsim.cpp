@@ -60,6 +60,26 @@ bool WidgetFluidSim::getEnableWind() const {
     return ui->enableWind->isChecked();
 }
 
+double WidgetFluidSim::getWindStrength() const {
+    return ui->windStrength->value();
+}
+
+double WidgetFluidSim::getFanWidth() const {
+    return ui->fanWidth->value();
+}
+
+double WidgetFluidSim::getFanHeight() const {
+    return ui->fanHeight->value();
+}
+
+double WidgetFluidSim::getFanLength() const {
+    return ui->fanLength->value();
+}
+
+int WidgetFluidSim::getColorMode() const {
+    return ui->colorMode->currentIndex();
+}
+
 int WidgetFluidSim::getIntegratorType() const {
     return ui->integrator->currentIndex();
 }

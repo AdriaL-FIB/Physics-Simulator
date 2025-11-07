@@ -65,6 +65,7 @@ protected:
     double shotHeight, shotAngle, shotSpeed;
 
     bool dragForceEnabled;
+    bool useQuadraticDrag;
     double kLinear, kQuadratic;
     ForceDrag* fDrag1 = nullptr;
     ForceDrag* fDrag2 = nullptr;

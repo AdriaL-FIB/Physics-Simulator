@@ -57,10 +57,9 @@ Integrator *Scene::createIntegrator(int type) {
         case 2: return new IntegratorImplicitEuler();
         case 3: return new IntegratorImplicitEuler(1);
         case 4: return new IntegratorMidpoint();
-        //case 5:
-        case 6: return new IntegratorRK2();
-        case 7: return new IntegratorRK4();
-        case 8: return new IntegratorVerlet();
+        case 5: return new IntegratorRK2();
+        case 6: return new IntegratorRK4();
+        case 7: return new IntegratorVerlet();
         default: return new IntegratorEmpty();
     }
 }

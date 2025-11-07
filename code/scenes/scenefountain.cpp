@@ -60,10 +60,37 @@ void SceneFountain::initialize() {
     colliderSphere.setRadius(20);
     colliderBox.setFromBounds(Vec3(30,0,20), Vec3(50,10,60));
 
+    colliderBall1.setCenter(Vec3(-40, 15, -30));
+    colliderBall1.setRadius(12);
+    colliderBall2.setCenter(Vec3(40, 25, 30));
+    colliderBall2.setRadius(15);
+    colliderBall3.setCenter(Vec3(-30, 35, 40));
+    colliderBall3.setRadius(10);
+
+    colliderPillar1.setFromBounds(Vec3(-60, 0, -60), Vec3(-50, 30, -40));
+    colliderPillar2.setFromBounds(Vec3(50, 0, -20), Vec3(60, 25, 0));
+    colliderPillar3.setFromBounds(Vec3(-10, 10, 50), Vec3(10, 35, 60));
+
+    colliderPlatform1.setFromBounds(Vec3(-25, 40, -25), Vec3(-5, 42, -5));
+    colliderPlatform2.setFromBounds(Vec3(10, 50, 10), Vec3(30, 52, 30));
+
+    colliderWallLeft.setFromBounds(Vec3(-70, 0, -70), Vec3(-68, 40, 70));
+    colliderWallRight.setFromBounds(Vec3(68, 0, -70), Vec3(70, 40, 70));
+
     sceneColliders.push_back(&colliderFloor);
     sceneColliders.push_back(&colliderRamp);
     sceneColliders.push_back(&colliderSphere);
     sceneColliders.push_back(&colliderBox);
+    sceneColliders.push_back(&colliderBall1);
+    sceneColliders.push_back(&colliderBall2);
+    sceneColliders.push_back(&colliderBall3);
+    sceneColliders.push_back(&colliderPillar1);
+    sceneColliders.push_back(&colliderPillar2);
+    sceneColliders.push_back(&colliderPillar3);
+    sceneColliders.push_back(&colliderPlatform1);
+    sceneColliders.push_back(&colliderPlatform2);
+    sceneColliders.push_back(&colliderWallLeft);
+    sceneColliders.push_back(&colliderWallRight);
 }
 
 
@@ -174,6 +201,59 @@ void SceneFountain::paint(const Camera& camera) {
     shader->setUniformValue("matspec", 0.0f, 0.0f, 0.0f);
     shader->setUniformValue("matshin", 0.0f);
     glFuncs->glDrawElements(GL_TRIANGLES, 3*2*6, GL_UNSIGNED_INT, 0);
+
+    vaoSphereH->bind();
+    modelMat = getSphereModelMatrix(colliderBall1);
+    shader->setUniformValue("ModelMatrix", modelMat);
+    shader->setUniformValue("matdiff", 0.9f, 0.7f, 0.2f);
+    glFuncs->glDrawElements(GL_TRIANGLES, 3*numFacesSphereH, GL_UNSIGNED_INT, 0);
+
+    modelMat = getSphereModelMatrix(colliderBall2);
+    shader->setUniformValue("ModelMatrix", modelMat);
+    shader->setUniformValue("matdiff", 0.2f, 0.7f, 0.9f);
+    glFuncs->glDrawElements(GL_TRIANGLES, 3*numFacesSphereH, GL_UNSIGNED_INT, 0);
+
+    modelMat = getSphereModelMatrix(colliderBall3);
+    shader->setUniformValue("ModelMatrix", modelMat);
+    shader->setUniformValue("matdiff", 0.9f, 0.2f, 0.7f);
+    glFuncs->glDrawElements(GL_TRIANGLES, 3*numFacesSphereH, GL_UNSIGNED_INT, 0);
+
+    vaoCube->bind();
+    modelMat = getAABBModelMatrix(colliderPillar1);
+    shader->setUniformValue("ModelMatrix", modelMat);
+    shader->setUniformValue("matdiff", 0.6f, 0.4f, 0.3f);
+    glFuncs->glDrawElements(GL_TRIANGLES, 3*2*6, GL_UNSIGNED_INT, 0);
+
+    modelMat = getAABBModelMatrix(colliderPillar2);
+    shader->setUniformValue("ModelMatrix", modelMat);
+    shader->setUniformValue("matdiff", 0.3f, 0.6f, 0.4f);
+    glFuncs->glDrawElements(GL_TRIANGLES, 3*2*6, GL_UNSIGNED_INT, 0);
+
+    modelMat = getAABBModelMatrix(colliderPillar3);
+    shader->setUniformValue("ModelMatrix", modelMat);
+    shader->setUniformValue("matdiff", 0.4f, 0.3f, 0.6f);
+    glFuncs->glDrawElements(GL_TRIANGLES, 3*2*6, GL_UNSIGNED_INT, 0);
+
+    modelMat = getAABBModelMatrix(colliderPlatform1);
+    shader->setUniformValue("ModelMatrix", modelMat);
+    shader->setUniformValue("matdiff", 0.7f, 0.5f, 0.3f);
+    glFuncs->glDrawElements(GL_TRIANGLES, 3*2*6, GL_UNSIGNED_INT, 0);
+
+    modelMat = getAABBModelMatrix(colliderPlatform2);
+    shader->setUniformValue("ModelMatrix", modelMat);
+    shader->setUniformValue("matdiff", 0.5f, 0.7f, 0.3f);
+    glFuncs->glDrawElements(GL_TRIANGLES, 3*2*6, GL_UNSIGNED_INT, 0);
+
+    modelMat = getAABBModelMatrix(colliderWallLeft);
+    shader->setUniformValue("ModelMatrix", modelMat);
+    shader->setUniformValue("matdiff", 0.5f, 0.5f, 0.5f);
+    glFuncs->glDrawElements(GL_TRIANGLES, 3*2*6, GL_UNSIGNED_INT, 0);
+
+    modelMat = getAABBModelMatrix(colliderWallRight);
+    shader->setUniformValue("ModelMatrix", modelMat);
+    shader->setUniformValue("matdiff", 0.5f, 0.5f, 0.5f);
+    glFuncs->glDrawElements(GL_TRIANGLES, 3*2*6, GL_UNSIGNED_INT, 0);
+
     vaoCube->release();
     shader->release();
 }
@@ -183,6 +263,7 @@ void SceneFountain::update(double dt) {
 
     // emit new particles, reuse dead ones if possible
     int emitParticles = std::max(1, int(std::round(emitRate * dt)));
+    
     for (int i = 0; i < emitParticles; i++) {
         Particle* p;
         if (!deadParticles.empty()) {
@@ -224,6 +305,41 @@ void SceneFountain::update(double dt) {
             }
         }
     }
+
+
+    //system.buildSpatialHashing(2);
+
+    //const std::vector<Particle*>& particles = system.getParticles();
+    //for (int i = 0; i < particles.size(); ++i) {
+    //    Particle* p1 = particles[i];
+
+    //    // Get neighbors using spatial hashing (only check nearby particles)
+    //    std::vector<int> neighbors = system.getNeighbors(i);
+
+    //    for (int j : neighbors) {
+    //        // Only process each pair once (avoid duplicate checks)
+    //        if (j <= i) continue;
+
+    //        Particle* p2 = particles[j];
+
+    //        // Create temporary sphere collider for particle 1
+    //        ColliderSphere sphereP1;
+    //        sphereP1.setCenter(p1->prevPos);
+    //        sphereP1.setRadius(p1->radius);
+
+    //        // Test collision between p1 and p2
+    //        Collision colInfo1;
+    //        if (sphereP1.testCollision(p2, colInfo1)) {
+    //            // Resolve collision for p2 with normal pointing from p1 to p2
+    //            sphereP1.resolveCollision(p2, colInfo1, kBounce, kFriction);
+
+    //            // Resolve collision for p1 with negated normal (Newton's 3rd law)
+    //            Collision colInfo2 = colInfo1;
+    //            colInfo2.normal = -colInfo1.normal;
+    //            sphereP1.resolveCollision(p1, colInfo2, kBounce, kFriction);
+    //        }
+    //    }
+    //}
 
     // check dead particles
     for (Particle* p : system.getParticles()) {

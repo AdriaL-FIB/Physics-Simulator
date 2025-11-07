@@ -122,7 +122,7 @@ void SceneRope::reset()
         p->pos = pos;
         p->prevPos = pos;
         p->vel = Vec3(0,0,0);
-        p->mass = 1;
+        p->setMass(1.0);
         p->radius = particleRadius;
         p->color = (1.0 - double(i)/numParticles)*color1
                         + double(i)/numParticles *color2;

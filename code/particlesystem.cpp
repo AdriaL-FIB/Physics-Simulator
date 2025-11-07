@@ -23,9 +23,9 @@ Vecd ParticleSystem::getDerivative() const {
         deriv[Particle::PhaseDimension*i    ] = particles[i]->vel[0];
         deriv[Particle::PhaseDimension*i + 1] = particles[i]->vel[1];
         deriv[Particle::PhaseDimension*i + 2] = particles[i]->vel[2];
-        deriv[Particle::PhaseDimension*i + 3] = particles[i]->force[0]/particles[i]->mass;
-        deriv[Particle::PhaseDimension*i + 4] = particles[i]->force[1]/particles[i]->mass;
-        deriv[Particle::PhaseDimension*i + 5] = particles[i]->force[2]/particles[i]->mass;
+        deriv[Particle::PhaseDimension*i + 3] = particles[i]->force[0]*particles[i]->invMass;
+        deriv[Particle::PhaseDimension*i + 4] = particles[i]->force[1]*particles[i]->invMass;
+        deriv[Particle::PhaseDimension*i + 5] = particles[i]->force[2]*particles[i]->invMass;
     }
     return deriv;
 }
@@ -33,9 +33,9 @@ Vecd ParticleSystem::getDerivative() const {
 Vecd ParticleSystem::getSecondDerivative() const {
     Vecd deriv(this->getStateSize());
     for (unsigned int i = 0; i < particles.size(); i++) {
-        deriv[Particle::PhaseDimension*i + 0] = particles[i]->force[0]/particles[i]->mass;
-        deriv[Particle::PhaseDimension*i + 1] = particles[i]->force[1]/particles[i]->mass;
-        deriv[Particle::PhaseDimension*i + 2] = particles[i]->force[2]/particles[i]->mass;
+        deriv[Particle::PhaseDimension*i + 0] = particles[i]->force[0]*particles[i]->invMass;
+        deriv[Particle::PhaseDimension*i + 1] = particles[i]->force[1]*particles[i]->invMass;
+        deriv[Particle::PhaseDimension*i + 2] = particles[i]->force[2]*particles[i]->invMass;
         deriv[Particle::PhaseDimension*i + 3] = 0;
         deriv[Particle::PhaseDimension*i + 4] = 0;
         deriv[Particle::PhaseDimension*i + 5] = 0;
@@ -88,9 +88,9 @@ Vecd ParticleSystem::getVelocities() const {
 Vecd ParticleSystem::getAccelerations() const {
     Vecd res(3*this->getNumParticles());
     for (unsigned int i = 0; i < particles.size(); i++) {
-        res[3*i  ] = particles[i]->force[0]/particles[i]->mass;
-        res[3*i+1] = particles[i]->force[1]/particles[i]->mass;
-        res[3*i+2] = particles[i]->force[2]/particles[i]->mass;
+        res[3*i  ] = particles[i]->force[0]*particles[i]->invMass;
+        res[3*i+1] = particles[i]->force[1]*particles[i]->invMass;
+        res[3*i+2] = particles[i]->force[2]*particles[i]->invMass;
     }
     return res;
 }
@@ -228,6 +228,7 @@ std::vector<int> ParticleSystem::getNeighbors(Particle *p) const
 
                     if (p != p2 and (p2->pos - p->pos).squaredNorm() <= h * h ) {
                         nb.push_back(pIndex);
+                        //if (nb.size() > 60) return nb;
                     }
                 }
 

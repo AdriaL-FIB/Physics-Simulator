@@ -44,6 +44,10 @@ double WidgetCloth::getParticleRadius() const {
     return ui->particleRad->value();
 }
 
+int WidgetCloth::getRelaxationSteps() const {
+    return ui->relaxationSteps->value();
+}
+
 bool WidgetCloth::showParticles() const {
     return ui->showParticles->isChecked();
 }

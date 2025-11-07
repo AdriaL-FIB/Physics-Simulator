@@ -95,6 +95,7 @@ protected:
     double colBounce = 0.01;
     double colFriction = 0.05;
     double particleRadius = 1;
+    int relaxationSteps = 10;
 
     //// mouse interaction
     //int grabX, grabY;

@@ -7,13 +7,16 @@
     <x>0</x>
     <y>0</y>
     <width>247</width>
-    <height>462</height>
+    <height>514</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
+   <item row="0" column="0" colspan="2">
+    <widget class="QComboBox" name="integrator"/>
+   </item>
    <item row="1" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
@@ -33,9 +36,6 @@
       <double>9.810000000000000</double>
      </property>
     </widget>
-   </item>
-   <item row="0" column="0" colspan="2">
-    <widget class="QComboBox" name="integrator"/>
    </item>
    <item row="2" column="0">
     <widget class="QLabel" name="label_2">
@@ -225,14 +225,134 @@
    <item row="11" column="0" colspan="2">
     <widget class="QCheckBox" name="enableWind">
      <property name="text">
-      <string>Enable Wind/Fan</string>
+      <string>Enable Fan</string>
      </property>
      <property name="checked">
       <bool>false</bool>
      </property>
     </widget>
    </item>
-   <item row="12" column="0" colspan="2">
+   <item row="12" column="0">
+    <widget class="QLabel" name="label_11">
+     <property name="text">
+      <string>Fan Strength</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="1">
+    <widget class="QDoubleSpinBox" name="windStrength">
+     <property name="maximum">
+      <double>500.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>10.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>100.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="0">
+    <widget class="QLabel" name="label_12">
+     <property name="text">
+      <string>Fan Width</string>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="1">
+    <widget class="QDoubleSpinBox" name="fanWidth">
+     <property name="minimum">
+      <double>2.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>50.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>10.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="0">
+    <widget class="QLabel" name="label_13">
+     <property name="text">
+      <string>Fan Height</string>
+     </property>
+    </widget>
+   </item>
+   <item row="14" column="1">
+    <widget class="QDoubleSpinBox" name="fanHeight">
+     <property name="minimum">
+      <double>2.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>50.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>10.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="15" column="0">
+    <widget class="QLabel" name="label_14">
+     <property name="text">
+      <string>Fan Reach</string>
+     </property>
+    </widget>
+   </item>
+   <item row="15" column="1">
+    <widget class="QDoubleSpinBox" name="fanLength">
+     <property name="minimum">
+      <double>10.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>150.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>5.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>70.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+   <item row="16" column="0">
+    <widget class="QLabel" name="label_10">
+     <property name="text">
+      <string>Particle Color Mode</string>
+     </property>
+    </widget>
+   </item>
+   <item row="16" column="1">
+    <widget class="QComboBox" name="colorMode">
+     <item>
+      <property name="text">
+       <string>None (Default)</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Neighbors</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Density</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Pressure</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="17" column="0" colspan="2">
     <widget class="QPushButton" name="btnUpdate">
      <property name="text">
       <string>Update</string>

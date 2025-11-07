@@ -27,6 +27,7 @@ public:
     double getKLinear() const;
     double getKQuadratic() const;
     bool isDragEnabled() const;
+    bool useQuadraticDrag() const;
 
     void setSolverTypes(const std::vector<std::string>& solvers);
     void setSolver1(int idx);

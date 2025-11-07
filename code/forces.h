@@ -53,18 +53,20 @@ protected:
 class ForceDrag : public Force
 {
 public:
-    ForceDrag() { klinear = kquadratic = 0; }
-    ForceDrag(double k1, double k2) { klinear = k1; kquadratic = k2; }
+    ForceDrag() { klinear = kquadratic = 0; useQuadratic = false; }
+    ForceDrag(double k1, double k2) { klinear = k1; kquadratic = k2; useQuadratic = false; }
     virtual ~ForceDrag() {}
 
     virtual void apply();
 
     void setDragCoefficients(double k1, double k2) { klinear = k1, kquadratic = k2; }
+    void setUseQuadratic(bool quad) { useQuadratic = quad; }
     double getLinearCoefficient() const { return klinear; }
     double getQuadraticCoefficient() const { return kquadratic; }
 
 protected:
     double klinear, kquadratic;
+    bool useQuadratic;
 };
 
 
@@ -129,16 +131,28 @@ protected:
 
 class ParticleSystem;
 
+// Enum for particle coloring modes in SPH visualization
+enum class SPHColorMode {
+    None = 0,       // Default color (no coloring)
+    Neighbors = 1,  // Color by number of neighbors
+    Density = 2,    // Color by density
+    Pressure = 3    // Color by pressure
+};
+
 class ForceSPH : public Force
 {
 public:
     ForceSPH(ParticleSystem* system) {
         this->system = system;
         h = 0;
+        colorMode = SPHColorMode::None;
+        hasInitializedDefaultColors = true;
     }
     ForceSPH(ParticleSystem* system, double h) {
         this->system = system;
         setH(h);
+        colorMode = SPHColorMode::None;
+        hasInitializedDefaultColors = true;
     }
 
     virtual void apply();
@@ -147,6 +161,12 @@ public:
 
     void setRestDensity(double p0) { this->p0 = p0; }
     void setViscosityConstant(double mu) { this->mu = mu; }
+    void setColorMode(SPHColorMode mode) { 
+        colorMode = mode;
+        if (colorMode == SPHColorMode::None)
+            hasInitializedDefaultColors = false;
+    }
+    SPHColorMode getColorMode() const { return colorMode; }
 
 protected:
     double kernelPoly6(double rSqr) const;
@@ -166,6 +186,10 @@ protected:
 
     double p0;
     double mu;
+    SPHColorMode colorMode;
+    bool hasInitializedDefaultColors;
+    
+    Vec3 computeColorGradient(double t) const;
 };
 
 inline void ForceSPH::setH(double h) {
@@ -175,68 +199,64 @@ inline void ForceSPH::setH(double h) {
     this->viscosityLaplacianFactor = 45.0 / (M_PI * std::pow(h, 5));
 }
 
-// Wind force (localized fan/ventilator)
 class ForceWind : public Force
 {
 public:
-    ForceWind();
-    
-    // Create wind with center, cross-section size (width x height), flow direction, length, and strength
-    // center: center of the outlet plane where air comes out
+    ForceWind() {
+        center = Vec3(0, 0, 0);
+        width = height = 10.0;
+        length = 10.0;
+        direction = Vec3(1, 0, 0);
+        strength = 10.0;
+        updateInternals();
+    }
+
+    // center: center of the fan plane where air comes out
     // width, height: cross-section dimensions of the air flow (perpendicular to direction)
     // dir: flow direction (will be snapped to nearest axis)
-    // length: how far the air reaches from the outlet
+    // length: how far the air reaches from the fan
     // strength: acceleration magnitude
-    ForceWind(const Vec3& center, double width, double height, const Vec3& dir, double length, double strength);
-    
+    ForceWind(const Vec3& center, double width, double height, const Vec3& dir, double length, double strength)
+        : center(center), width(width), height(height), direction(snapToAxis(dir)),
+        length(length), strength(strength) {
+        updateInternals();
+    }
+
     virtual ~ForceWind() {}
 
     virtual void apply();
 
-    // Set center (the face where air comes out)
     void setCenter(const Vec3& c) { center = c; updateInternals(); }
-    
-    // Set cross-section dimensions (width x height perpendicular to flow)
+
     void setDimensions(double w, double h) { width = w; height = h; updateInternals(); }
-    
-    // Set flow direction (will be snapped to nearest axis: ±X, ±Y, ±Z)
-    void setDirection(const Vec3& d);
-    
-    // Set how far the air reaches
+    void setDirection(const Vec3& d);    
     void setLength(double l) { length = l; updateInternals(); }
     
     void setStrength(double s) { strength = s; }
-    void setFrequency(double f) { frequency = f; }
-    void setTimePointer(const double* tp) { timePtr = tp; }
 
     Vec3 getCenter() const { return center; }
-    Vec3 getAABBCenter() const { return aabbCenter; }  // AABB center (for rendering)
-    Vec3 getHalfSize() const { return boxHalfSize; }   // AABB half-size (for rendering)
+    Vec3 getAABBCenter() const { return aabbCenter; }
+    Vec3 getHalfSize() const { return boxHalfSize; }
     Vec3 getDirection() const { return direction; }
     double getWidth() const { return width; }
     double getHeight() const { return height; }
     double getLength() const { return length; }
     double getStrength() const { return strength; }
-    double getFrequency() const { return frequency; }
 
 protected:
-    // Snap direction to nearest cardinal axis (±X, ±Y, or ±Z)
     static Vec3 snapToAxis(const Vec3& d);
     
     // Update internal AABB representation and cached values
     void updateInternals();
 
 protected:
-    // User-facing parameters
-    Vec3 center;            // center of the outlet face (where air comes out)
-    double width, height;   // cross-section dimensions perpendicular to flow
-    double length;          // how far the air reaches
-    Vec3 direction;         // flow direction (axis-aligned: ±X, ±Y, or ±Z)
-    double strength;        // acceleration magnitude
-    double frequency;       // pulsation frequency in Hz (0 = steady)
-    const double* timePtr;  // pointer to simulation time
-    
-    // Cached/computed values (for efficiency)
+    Vec3 center;            
+    double width, height;   
+    double length;          
+    Vec3 direction;         
+    double strength;        
+
+    // Cached/computed values
     Vec3 aabbCenter;        // AABB center (center + direction * length/2)
     Vec3 boxHalfSize;       // AABB half-extents
     Vec3 invHalfSize;       // precomputed 1/boxHalfSize (optimization)

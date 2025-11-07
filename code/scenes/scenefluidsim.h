@@ -1,11 +1,6 @@
 #ifndef SCENEFLUIDSIM_H
 #define SCENEFLUIDSIM_H
 
-// Wind performance diagnostic: set to 0 to disable all wind code at compile-time
-#ifndef ENABLE_WIND
-#define ENABLE_WIND 1
-#endif
-
 #include <QOpenGLShaderProgram>
 #include <QOpenGLVertexArrayObject>
 #include <list>
@@ -15,10 +10,7 @@
 #include "integrators.h"
 #include "colliders.h"
 
-// Forward declarations for conditional compilation
-#if ENABLE_WIND
 class ForceWind;
-#endif
 
 class SceneFluidSim : public Scene
 {
@@ -48,6 +40,9 @@ public slots:
     void updateSimParams();
 
 protected:
+    void clampFanToBounds();
+
+protected:
     WidgetFluidSim* widget = nullptr;
 
     QOpenGLShaderProgram* shader = nullptr;
@@ -62,9 +57,7 @@ protected:
     std::list<Particle*> deadParticles;
     ForceConstAcceleration* fGravity;
     ForceSPH* fSPH;
-#if ENABLE_WIND
     ForceWind* fWind;
-#endif
 
     ColliderPlane colliderFloor, colliderRamp;
     ColliderSphere colliderSphere;
@@ -78,11 +71,10 @@ protected:
     double particleRadius;
     double particleMass;
     bool emitParticles;
-#if ENABLE_WIND
-    bool windEnabled;  // runtime control to enable/disable wind force
-    Vec3 fanCenter;    // center of the fan box (for rendering and movement)
-    Vec3 fanHalfSize;  // half-size of the fan box
-#endif
+    bool windEnabled;
+    int maxCollisionTries = 10;
+    Vec3 fanCenter;
+    Vec3 fanHalfSize;
 
     Vec3 fountainPos;
     int mouseX, mouseY;

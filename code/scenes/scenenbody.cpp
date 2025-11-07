@@ -102,7 +102,7 @@ void SceneNBody::reset() {
         Particle* p = new Particle();
         p->pos = sceneR * radial;
         p->vel = 0.2*sceneR * tangent;
-        p->mass = massScale * (1 + (massRatio - 1)*(double(i)/(numBodies-1)));
+        p->setMass(massScale * (1 + (massRatio - 1)*(double(i)/(numBodies-1))));
         p->radius = 5*std::sqrt(p->mass/massScale);
         p->color = getParticleColor(double(i)/numBodies);
         system.addParticle(p);

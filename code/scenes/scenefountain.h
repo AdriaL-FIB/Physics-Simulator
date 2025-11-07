@@ -55,6 +55,10 @@ protected:
     ColliderPlane colliderFloor, colliderRamp;
     ColliderSphere colliderSphere;
     ColliderAABB   colliderBox;
+    ColliderSphere colliderBall1, colliderBall2, colliderBall3;
+    ColliderAABB colliderPillar1, colliderPillar2, colliderPillar3;
+    ColliderAABB colliderPlatform1, colliderPlatform2;
+    ColliderAABB colliderWallLeft, colliderWallRight;
 
     double kBounce, kFriction;
     double emitRate;

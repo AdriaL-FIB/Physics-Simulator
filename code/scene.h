@@ -43,7 +43,7 @@ public:
     inline const std::vector<std::string> getIntegratorNames() {
         return {
             "Euler", "Symplectic Euler", "Implicit Euler (Taylor)", "Implicit Euler (Newton)",
-            "Midpoint", "Leapfrog (Not Impl)", "RK2", "RK4", "Verlet", "Velocity Verlet (Not Impl)"
+            "Midpoint", "RK2", "RK4", "Verlet"
         };
     }
 
